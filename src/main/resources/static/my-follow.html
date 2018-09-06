@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="css/Fans.css"/>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <script src="js/jquery-1.11.0.min.js"></script>
+    <script src="js/popper.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/element.js"></script>
+    <script src="js/vue.js"></script>
+    <script>
+        var user = localStorageToObj("user");
+        var userId = user.userId;
+        $(function () {
+            myAjax("/fans/getFollowById", {"userId": user.userId}, function (result) {
+                var wrap = new Vue({
+                    el: '#wrap',
+                    data: {
+                        follows: result,
+                        userId: userId
+                    },
+                    methods: {
+                        ToFollow(data) {
+                            objToLocalStorage("MyToTaId", data.follow1Id);
+                            window.location.href = path + "/index-TA2.html";
+                        }
+                    }
+                });
+                $(".jump-back").on("click", function () {
+                    window.history.back();
+                });
+            });
+        });
+
+    </script>
+</head>
+<body>
+<div class="wrap" id="wrap">
+    <div class="head">
+        <div class="header">
+            <div class="back jump-back">
+                <img src="img/icon_back.png"/>
+                <span id="">返回</span>
+            </div>
+        </div>
+    </div>
+    <div id="main">
+        <div class="title">
+            我的关注
+        </div>
+        <template>
+            <div class="topic-type" v-for="follow in follows">
+                <div class="type-head" @click="ToFollow({follow1Id:follow.userId})">
+                    <img :src="follow.headImg"/>
+                </div>
+                <div class="type-name">
+                    <div class="name-mile">
+                        <span id="name1" v-text="follow.username"></span>
+                        <span v-if="follow.gender=='男'"><img src="img/icon-man.png"/></span>
+                        <span v-else-if="follow.gender=='女'"><img src="img/icon-woman.png"/></span><br/>
+                        已贡献<span id="mile1" v-text="follow.contributeMils"></span>km
+                    </div>
+                    <div class="follow">
+
+                        <span v-if="follow.userFansId != userId">
+                          <span v-if="follow.isFollow ==null">
+                        <img src="img/isFollow.png" name="follow"/>
+                        </span>
+                        <span v-if="follow.isFollow !=null && follow.isFans !=null">
+                        <img src="img/huxiang.png"/>
+                        </span>
+                        </span>
+
+                    </div>
+                </div>
+            </div>
+            <div v-if="follows.length<=0">
+                <img src="img/Page%201.png" style="margin-left: 1rem;margin-top: 0.5rem"/>
+                <h1 style="margin-left: 2.2rem;color: #6c757d;font-size: 20px">快去跑步发现偶像吧</h1>
+            </div>
+        </template>
+    </div>
+</div>
+</body>
+<script src="js/page-jump.js"></script>
+</html>

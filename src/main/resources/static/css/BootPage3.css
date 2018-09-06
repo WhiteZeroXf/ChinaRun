@@ -1,0 +1,37 @@
+html{font-size: 50px;}
+body{font-size: 0.14rem /*实际相当于14px*/}
+
+*{margin: 0rem;padding: 0rem;}
+body{margin: 0rem;padding: 0rem;width: 100%;font-family: PingFangSC-Semibold;}
+ul li{list-style-type: none;}
+a{text-decoration: none;}
+
+.bottom{width: 100%;height: 100%;}
+.map img{width: 100%;height: 100%;position: absolute;z-index: -2;}
+.bg{background-image: linear-gradient(-180deg, #FFFFFF 0%, rgba(255,255,255,0.00) 100%);width: 100%;height: 4rem;position: absolute;z-index: -1;top: 0rem;}
+.bg1{background-image: linear-gradient(0deg, #FFFFFF 0%, rgba(255,255,255,0.00) 100%);width: 100%;height: 4rem;position: absolute;z-index: -1;bottom: 0rem;}
+
+.all,.lb{width: 87%;margin-left: auto;margin-right: auto;display: flex;justify-content: space-between;align-items: center;}
+.milage,.lbmileage{display: flex;justify-content: flex-start;align-items: flex-end;}
+.count,.lbmile{font-family: DINCond-Black;font-size: 1.4rem;color: #1C202A;line-height: 1.4rem;}
+.dw,.lbdw{font-family: DINAlternate-Bold;font-size: 0.30rem;color: #1C202A;line-height: 0.3rem;}
+.des{width: 1.60rem;}
+.des img{width: 1.60rem;height: 0.7rem;}
+
+
+.lbdes{width: 1.8rem;}
+.lbdes img{width: 1.8rem;height: 0.7rem;}
+
+.img-lightup{width: auto;height: 0.56rem;}
+.img-unlight{width: auto;height: 0.56rem;}
+.running img{width: 0.4rem;height: 0.4rem;border-radius: 50%;border: #FFFFFF solid 0.02rem;position: relative;}
+.user{z-index: 1;}
+.userone{z-index: 2;margin-left: -0.13rem;}
+.usertwo{z-index: 3;margin-left: -0.13rem;margin-top: -0.13rem;}
+.userthree{z-index: 4;margin-left: -0.13rem;margin-top: -0.13rem;}
+.userfour{z-index: 5;margin-left: -0.13rem;margin-top: -0.13rem;}
+
+.wrap-pt{position: absolute;bottom: 1.52rem;width: 100%;z-index: 12;}
+.pt{width: 87%;margin-left: auto;margin-right: auto;display: flex;justify-content: space-between;align-items: flex-end;}
+.wz{font-family: PingFangSC-Semibold;font-size: 0.28rem;color: #292C35;}
+.btn img{width: 0.3rem;height: 0.3rem;}

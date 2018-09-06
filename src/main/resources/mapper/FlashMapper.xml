@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero.cr.dao.FlashMapper">
+    <resultMap id="BaseResultMap" type="com.zero.cr.pojo.Flash">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="flash_id" jdbcType="BIGINT" property="flashId"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="subject_id" jdbcType="BIGINT" property="subjectId"/>
+        <result column="topic_id" jdbcType="BIGINT" property="topicId"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="support_sum" jdbcType="BIGINT" property="supportSum"/>
+        <result column="comment_sum" jdbcType="BIGINT" property="commentSum"/>
+        <result column="media" jdbcType="VARCHAR" property="media"/>
+        <result column="publish_time" jdbcType="TIMESTAMP" property="publishTime"/>
+        <result column="point_id" jdbcType="BIGINT" property="pointId"/>
+        <result column="content" jdbcType="LONGVARCHAR" property="content"/>
+    </resultMap>
+
+
+    <sql id="baseColumn">
+        flash_id, user_id, subject_id, topic_id, title, support_sum
+        , comment_sum, media, publish_time, point_id, content
+    </sql>
+
+    <!-- &lt;!&ndash;根据topicId查询&ndash;&gt;
+     <select id="selectFalshByTopicId" resultType="com.zero.cr.vo.UserFlashBean">
+         SELECT
+         j.total_mils,
+         s.title as subtitle,
+         u.user_id,u.username,u.gender,u.age,u.birthday,u.head_img,
+         u.sign,u.fans_sum,u.follow_sum,
+         f.flash_id,f.subject_id,f.topic_id,f.title,f.support_sum,
+         f.comment_sum,f.media,f.publish_time,f.point_id,f.content
+
+         FROM flash f inner join user u on f.user_id=u.user_id
+         INNER JOIN subject s on f.subject_id = s.subject_id INNER
+         JOIN `join` j on s.subject_id=j.subject_id
+         and j.user_id=u.user_id
+         <where>
+             <if test="topicId!=null">
+                 and f.topic_id=#{topicId}
+             </if>
+         </where>
+
+         order by f.flash_id desc
+
+     </select>-->
+
+    <!--获赞-->
+    <update id="updateZan">
+        update flash
+        set support_sum = support_sum + 1
+        where flash_id = #{flashId}
+    </update>
+    <!--取消赞-->
+    <update id="updateNZan">
+        update flash
+        set support_sum = support_sum - 1
+        where flash_id = #{flashId}
+    </update>
+    <!-- 获取所有李白跑地球的日志 Hxf 开始 -->
+    <select id="listAllLBRun" resultType="map">
+        select t.topic_name  topicName,
+               t.topic_id    topicId,
+               f.flash_id    flashId,
+               f.media       media,
+               f.title       title,
+               f.support_sum supportSum,
+               u.username    username,
+               u.head_img    headImg
+        from flash f
+                 join user u on f.user_id = u.user_id
+                 join topic t on f.topic_id = t.topic_id
+        <where>
+            <if test="userId != null and userId != ''">
+                u.user_id = #{userId}
+            </if>
+        </where>
+    </select>
+    <!-- 获取所有李白跑地球的日志 Hxf 结束 -->
+
+    <!--评论数增加-->
+    <update id="updateCommentSum">
+        update flash
+        set comment_sum = comment_sum + 1
+        where flash_id = #{flashId}
+    </update>
+
+    <!-- 获取当前话题下的所有日志 所需的信息 start-->
+    <select id="selectFalshByTopicId" resultType="map">
+        select DISTINCT t.topic_name              topicName,
+                        t.person_sum              personSum,
+                        f.flash_id                flashId,
+                        f.publish_time            publishTime,
+                        f.content,
+                        f.support_sum             supportSum,
+                        f.comment_sum             commentSum,
+                        f.media,
+                        u.user_id                 userId,
+                        u.head_img                headImg,
+                        u.username,
+                        u.gender,
+                        s.subject_id              subjectId,
+                        s.title                   subtitle,
+                        s.img,
+                        j.total_mils              totalMils,
+                        slog.flash_comment_log_id flashCommentLogId,
+                        fans.fans_id              isFans,
+                        folow.fans_id             isFolow
+
+        from topic t
+                 left join flash f on f.topic_id = t.topic_id
+                 left join user u on u.user_id = f.user_id
+                 left join `join` j on j.user_id = u.user_id and f.subject_id = j.subject_id
+                 left join subject s on s.subject_id = f.subject_id
+                 left join flash_comment_log slog on slog.user_id = #{userId} and slog.type_id = f.flash_id and type = 2
+                 left join fans on fans.user_id = #{userId} and fans.user_fans_id = u.user_id
+                 left join fans folow on folow.user_fans_id = #{userId} and folow.user_id = u.user_id
+
+        where t.topic_id = #{topicId}
+
+
+    </select>
+    <!-- 获取当前话题下的所有日志 所需的信息 end-->
+</mapper>

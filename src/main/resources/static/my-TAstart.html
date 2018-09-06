@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="css/MyRun.css"/>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <script src="js/jquery-1.11.0.min.js"></script>
+    <script src="js/popper.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/vue.js"></script>
+    <script type="text/javascript">
+        var userId = localStorageToObj("TaStartId");
+        $(function () {
+            myAjax("/join/getMyStart", {"userId": userId}, function (result) {
+                var wrap_MyRun1 = new Vue({
+                    el: '#wrap_MyRun1',
+                    data: {
+                        MyRun: result
+                    },
+                    methods: {
+                        run(data) {
+                            myAjax("/topic/getST", {subjectId: data.subjectId}, function (data) {
+                                objToLocalStorage("subject", data.subject);
+                                objToLocalStorage("topic", data.topic);
+                                window.location.href = path + "/run/Begin.html";
+                            });
+                        },
+                        goSubject(data) {
+                            objToLocalStorage("subjectId", data.subjectId);
+                            window.location.href = path + "/ThematicDetails.html";
+                        }
+                    }
+                });
+                $(".jump-discover").on("click", function () {
+                    window.location.href = "index-discover.html";
+                });
+                $(".jump-index").on("click", function () {
+                    window.location.href = "index.html";
+                });
+                $(".jump-my").on("click", function () {
+                    window.location.href = "index-my.html";
+                });
+                $(".jump-back").on("click", function () {
+                    window.history.back();
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+<div class="wrap_MyRun1" id="wrap_MyRun1">
+    <div class="MyRun_header">
+
+    </div>
+    <div class="MyRun_nav">
+        <div class="back jump-back">
+            <img src="img/icon_back.png"/>
+            <span id="asd">返回</span>
+        </div>
+    </div>
+    <div class="MyRun_content">
+        <div class="title">
+            TA的发起
+        </div>
+        <div class="MyRun_masonry">
+            <div class="MyRun_column">
+                <template>
+                    <div class="MyRun_column" v-for="myRun in MyRun">
+                        <div class="MyRun_item">
+                            <div class="MyRun_content_topic">
+                                <div class="MyRun_content_topic_shade">
+                                    <ul>
+                                        <li @click="goSubject({subjectId:myRun.subject.subjectId})">
+                                            <div class=" MyRun_shade_content
+                                        ">
+                                                <span id="MyRun_shade_title" v-text="myRun.subject.title"></span>
+                                                <div class="MyRun_shade_finish">
+                                                    <span id="MyRun_shade_finish">已完成</span>
+                                                    <span id="MyRun_shade_finish1"
+                                                          v-text="parseInt((myRun.subject.mileageFinish/myRun.subject.mileageTotal)*100)"></span>
+                                                    <span>%</span>
+                                                </div>
+                                            </div>
+                                            <span id="MyRun_shade_min" v-text="'#'+myRun.topic.topicName+'#'">
+												</span>
+                                            <div class="MyRun_shade_count">
+                                                <img src="img/icon-people.png"/>
+                                                <span id="" v-text="myRun.subject.personSum">
+											</span>
+                                            </div>
+                                        </li>
+                                        <li class=""></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="MyRun-shade-img">
+                            </div>
+                            <div class="MyRun_item__content"
+                                 style="background-image:url(img/picture1.png);background-repeat: no-repeat;background-position:center center;height: 1.6rem;background-size: cover;"></div>
+                            <div class="MyRun_item__foot">
+                                <input type="hidden" value="1"><br>
+                                <input type="hidden" value="1">
+                            </div>
+                        </div>
+                    </div>
+                    <div v-if="MyRun.length<=0">
+                        <img src="img/Page%201.png" style="margin-left: 0.8rem;margin-top: 0.5rem"/>
+                        <h1 style="margin-left: 1.4rem;color: #6c757d;font-size: 20px">对方还没有发起快跑</h1>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+<script src="js/page-jump.js"></script>
+</html>

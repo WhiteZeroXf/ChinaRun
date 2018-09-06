@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8"/>
+    <title></title>
+    <meta href="favicon.ico"/>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <script type="text/javascript" src="js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="js/page-jump.js"></script>
+    <script type="text/javascript" src="js/common.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/index-nearby.css"/>
+    <script type="text/javascript"
+            src="http://api.map.baidu.com/api?v=2.0&ak=4GHXGuezYfxslHUgWnMngb45RsOtVu96"></script>
+
+    <script type="text/javascript">
+        var num = 0;
+
+        //添加数据
+        function addData(title, topic, finish, peopleSum, imgUrl, id) {
+            //随机选出一种颜色
+            var color = ["#4e4ee7", "#FF0000", "#238E23", "#c169ff", "#2F4F4F"];
+            var color_num = parseInt((Math.random() * 10) % color.length);
+            //debugger
+            var $dd = $("#muban_div").find("[class='item']").clone(true);
+            <!--已完成：finish_span title:shade_title topic:shade_main people:people_span img:item_img-->
+            /*已完成*/
+            $dd.find("#finish_span").text(parseInt(finish * 100) + "%");
+            /*标题*/
+            $dd.find("#shade_title").text(title);
+            /*话题*/
+            $dd.find("[id='shade_min']").text("#" + topic + "#");
+            /*参与人数*/
+            $dd.find("#people_span").text(peopleSum);
+            /*background-image: linear-gradient(-179deg, #1CD577 0%, rgba(28,213,119,0.00) 100%)  item__shade*/
+            $dd.find("[id='item__back']").css("background-image", "linear-gradient(-179deg, " + color[color_num] + " 0%, rgba(28,213,119,0.00) 100%)");
+            //url(img/picture1.png);background-repeat: no-repeat;background-position:center center;  width: 88%;height: 2.4rem;background-size: cover;"
+            // $(".column").find("[id=item_img]").css("background-image" , "img/picture3.png");
+
+            //var n = $(".column").find("[class='item']").length;
+
+            //绑定单击响应函数
+            $dd.on("click", function () {
+                objToLocalStorage("subjectId", id);
+                window.location.href = path + "/ThematicDetails.html";
+            });
+
+            if (num % 2 == 0) {
+                right($dd);
+            } else {
+                left($dd);
+            }
+            num++;
+        }
+
+
+        var l = 0;
+        var r = 0;
+
+        function left(obj) {
+            if (l % 2 == 0) {
+                obj.find("#item_img").attr("style", "background-image:url(img/picture2.png);background-repeat: no-repeat;background-position:center center;  width: 88%;height: 2.4rem;background-size: cover;");
+                $(".column").last().append(obj);
+            } else {
+                obj.find("#item_img").attr("style", "background-image:url(img/picture2.png);background-repeat: no-repeat;background-position:center center;  width: 88%;height: 1.7rem;background-size: cover;");
+                $(".column").last().append(obj);
+            }
+            l++;
+        }
+
+        function right(obj) {
+            if (r % 2 == 0) {
+                obj.find("#item_img").attr("style", "background-image:url(img/picture1.png);background-repeat: no-repeat;background-position:center center;  width: 88%;height: 1.7rem;background-size: cover;");
+                $(".column").first().append(obj);
+            } else {
+                obj.find("#item_img").attr("style", "background-image:url(img/picture1.png);background-repeat: no-repeat;background-position:center center;  width: 88%;height: 2.4rem;background-size: cover;");
+                $(".column").first().append(obj);
+            }
+            r++;
+        }
+
+        $(function () {
+            var geolocation = new BMap.Geolocation();
+            // 开启SDK辅助定位
+            geolocation.enableSDKLocation();
+            geolocation.getCurrentPosition(function (r) {
+                if (this.getStatus() == BMAP_STATUS_SUCCESS) {
+
+                    myAjax("/subject/querySubjectNear", {"lat":r.point.lat,"lng":r.point.lng}, function (data) {
+                        if (data) {
+
+                            $.each(data, function (i, elt) {
+                                addData(elt.title, elt.topic_name, elt.mileage_finish / elt.mileage_total, elt.person_sum, "", elt.subject_id);
+                            })
+                        }
+                    });
+
+                }
+                else {
+                    alert('failed' + this.getStatus());
+                }
+            });
+
+        });
+
+    </script>
+
+</head>
+
+<body>
+<div class="wrap_index">
+    <div class="header"></div>
+    <div class="blur-bg"></div>
+    <div class="nav-mask"></div>
+    <div class="nav">
+        <ul class="nav_runfast">
+            <li class="jump-index">推荐</li>
+            <li class="nearby">附近</li>
+            <li class="jump-my-myrun-Recommend" id="jump-my-run">我的快跑</li>
+        </ul>
+    </div>
+
+    <div class="content">
+
+        <div class="content_topic">
+            <div class="masonry">
+
+                <!--左半边-->
+                <div class="column">
+
+                </div>
+
+
+                <!--右半边-->
+                <div class="column">
+
+                </div>
+            </div>
+
+            <!--   <div class=" content_ad ">
+                   <img src="img/banner_ad.png"/>
+               </div>-->
+        </div>
+        <div class="content_ad ">
+            <img src="img/banner-ad.png"/>
+        </div>
+    </div>
+    <div style="height: 30px"></div>
+
+    <div class="footer">
+        <ul class="tab_bar">
+            <li class="find jump-discover"><img src="img/icon-explore.png"/>发现</li>
+            <li class="Run"><img src="img/icon-home.png"/></li>
+            <li class="my jump-my"><img src="img/icon-my%20(2).png"/>我的</li>
+        </ul>
+    </div>
+</div>
+
+<!--已完成：finish_span title:shade_title topic:shade_main people:people_span img:item_img-->
+
+<!--模板-->
+<div id="muban_div" style="display: none;">
+    <div class="item">
+        <div class="shadde_topic" style="width: 44%;">
+            <div class="item__shade" id="item__back"
+                 style="background-image: linear-gradient(-179deg, #0000FF 0%, rgba(28,213,119,0.00) 100%);">
+                <div class="shade_content">
+                    <img src="img/hot.png"/>
+                    <span>
+                        已完成
+                    </span>
+                    <span id="finish_span">
+                        89%
+                    </span>
+                </div>
+                <span class="shade_title" id="shade_title">
+                    跟随李白跑地球
+                    超级马拉松活动
+                </span>
+                <span class="shade_min" id="shade_min">
+                    #挑战自我#
+                </span>
+                <div class="shade_count">
+                    <img src="img/icon-people.png"/>
+                    <span id="people_span">
+                        14286
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="item__content" id="item_img"
+             style="background-image:url(img/picture1.png);background-repeat: no-repeat;background-position:center center;  width: 88%;height: 2.4rem;background-size: cover;"></div>
+    </div>
+
+</div>
+
+</body>
+<script src="js/page-jump.js"></script>
+</html>

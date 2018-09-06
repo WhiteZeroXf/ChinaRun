@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero.cr.dao.PointMapper">
+  <resultMap id="BaseResultMap" type="com.zero.cr.pojo.Point">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="point_id" jdbcType="BIGINT" property="pointId" />
+    <result column="run_id" jdbcType="BIGINT" property="runId" />
+    <result column="lng" jdbcType="FLOAT" property="lng" />
+    <result column="lat" jdbcType="FLOAT" property="lat" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <select id="getPointByRunId" resultMap="BaseResultMap">
+    select * from point where run_id = #{runId};
+  </select>
+</mapper>

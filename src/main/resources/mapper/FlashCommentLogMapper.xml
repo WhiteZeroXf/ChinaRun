@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero.cr.dao.FlashCommentLogMapper">
+  <resultMap id="BaseResultMap" type="com.zero.cr.pojo.FlashCommentLog">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="flash_comment_log_id" jdbcType="BIGINT" property="flashCommentLogId" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="type" jdbcType="BIGINT" property="type" />
+    <result column="type_id" jdbcType="BIGINT" property="typeId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <!--评论日志记录-->
+  <insert id="insertCommentFlashRecord" >
+    INSERT  INTO  flash_comment_log(user_Id,type,type_id,create_time) values (#{userId},1,#{typeId},now());
+
+
+  </insert>
+  <!--赞日志记录-->
+  <insert id="insertZanFlashRecord" >
+    INSERT  INTO  flash_comment_log(user_Id,type,type_id,create_time) values (#{userId},2,#{typeId},now());
+
+
+  </insert>
+  <!--赞评论记录-->
+  <insert id="insertZanCommentFlashRecord" >
+    INSERT  INTO  flash_comment_log(user_Id,type,type_id,create_time) values (#{userId},3,#{typeId},now());
+  </insert>
+
+  <!--查看赞日志记录-->
+  <select id="selectZanFlashRecord" resultType="int">
+    SELECT COUNT(*) FROM flash_comment_log WHERE user_id=#{userId} and type_id=#{typeId} and type=2
+  </select>
+
+  <!--删除赞日志记录-->
+  <delete id="deleteZanFlashRecord" >
+  DELETE FROM flash_comment_log WHERE user_id=#{userId} and type_id=#{typeId} and type=2
+  </delete>
+  <!--查看赞评论记录-->
+  <select id="selectZanCommentRecord" resultType="int">
+    SELECT COUNT(*) FROM flash_comment_log WHERE user_id=#{userId} and type_id=#{typeId} and type=3
+  </select>
+
+  <!--查询主键-->
+  <select id="selectFlashCommentLogID" resultType="int">
+    select flash_comment_log_id   from flash_comment_log f  where f.user_id=#{userId} and f.type_id=#{typeId}
+  </select>
+
+</mapper>

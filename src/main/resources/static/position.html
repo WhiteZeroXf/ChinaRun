@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="css/position.css"/>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=1.2"></script>
+    <script type="text/javascript"
+            src="http://api.map.baidu.com/api?v=2.0&ak=4GHXGuezYfxslHUgWnMngb45RsOtVu96"></script>
+    <script type="text/javascript" src="js/jquery-1.11.0.min.js"></script>
+    <script src="js/common.js"></script>
+
+    <style type="text/css">
+
+        .sk-double-bounce {
+            width: 40px;
+            height: 40px;
+            position: relative;
+            margin: 50% auto;
+        }
+
+        .sk-double-bounce .sk-child {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: #333;
+            opacity: 0.6;
+            position: absolute;
+            top: 0;
+            left: 0;
+            -webkit-animation: sk-doubleBounce 2s infinite ease-in-out;
+            animation: sk-doubleBounce 2s infinite ease-in-out;
+        }
+
+        .sk-double-bounce .sk-double-bounce2 {
+            -webkit-animation-delay: -1.0s;
+            animation-delay: -1.0s;
+        }
+
+        @-webkit-keyframes sk-doubleBounce {
+            0%, 100% {
+                -webkit-transform: scale(0);
+                transform: scale(0);
+            }
+            50% {
+                -webkit-transform: scale(1);
+                transform: scale(1);
+            }
+        }
+        @keyframes sk-doubleBounce {
+            0%, 100% {
+                -webkit-transform: scale(0);
+                transform: scale(0);
+            }
+            50% {
+                -webkit-transform: scale(1);
+                transform: scale(1);
+            }
+        }
+        .topic-type:active{
+        }
+    </style>
+
+
+    <script type="text/javascript">
+
+        $(function($) {
+            var flag = false;
+            var displayPOI = null;
+            var map = new BMap.Map("container");
+            var geolocation = new BMap.Geolocation();
+            geolocation.getCurrentPosition(function (p) {
+                if (this.getStatus() == BMAP_STATUS_SUCCESS) {
+                    flag = true;
+                    $(".sk-double-bounce").attr("style", "display:none;");
+                    var mPoint = new BMap.Point(p.point.lng, p.point.lat);
+                    map.centerAndZoom(mPoint, 16);
+                    //map.enableScrollWheelZoom(); //启用滚轮缩放
+                    var mOption = {
+                        poiRadius: 1000, //半径为1000米内的POI,默认100米
+                        numPois: 50 //列举出50个POI,默认10个
+                    }
+                    var myGeo = new BMap.Geocoder(); //创建地址解析实例
+                    displayPOI = function() {
+                        var addressJson = new Array();
+                        //map.addOverlay(new BMap.Circle(mPoint, 1000)); //添加一个圆形覆盖物
+                        myGeo.getLocation(mPoint,
+                            function mCallback(rs) {
+                                var allPois = rs.surroundingPois; //获取全部POI（该点半径为100米内有6个POI点）
+
+                                for (i = 0; i < allPois.length; ++i) {
+                                    addressJson.push({"city":allPois[i].city ,"title": allPois[i].title, "address": allPois[i].address , "point":allPois[i].point});
+                                    map.addOverlay(new BMap.Marker(allPois[i].point));
+                                }
+                                pushData(addressJson);
+                            }, mOption
+                        );
+                    }
+
+                    //获取详细内容
+                    displayPOI();
+                }
+            });
+
+
+            //搜索位置点击响应函数
+            $("#search_div").on("click", function(){
+                if(!flag){
+                    alert("正在搜索位置");
+                    return;
+                }
+                $("#searchLocation").focus();
+            });
+            //失去焦点
+            $("#searchLocation").blur(function(){
+                if(!flag){
+                    return;
+                }
+                if($(this).val().length == 0){
+                    displayPOI();
+                };
+                $(this).val("");
+            });
+
+            $("#searchLocation").on("change",function () {
+                if($(this).val().length==0){
+                    displayPOI();
+                    return
+                }
+                var options = {
+                    onSearchComplete: function(results) {
+                        if(local.getStatus() == BMAP_STATUS_SUCCESS) {
+                            // 判断状态是否正确
+                            var s = [];
+                            for(var i = 0; i < results.getCurrentNumPois(); i++) {
+                                s.push({"city":results.getPoi(i).city ,"title":results.getPoi(i).title , "address":results.getPoi(i).address , "point":results.getPoi(i).point});
+                            }
+                            pushData(s);
+                        }
+                    }
+                };
+                var local = new BMap.LocalSearch(map, options);
+                local.search($(this).val());
+            });
+        });
+
+        function pushData(arr) {
+            $("#addr_content").empty();
+
+            /**
+             * <div class="topic-type">
+             <div class="position-p">
+             <span id="position">
+             南京
+             </span><br />
+             </div>
+             </div>
+             */
+            var city = "<div class='topic-type'>" +
+                "<div class='position-p'>" +
+                "<span class='position-title' style='margin-bottom: 25px'>" + arr[0].city + "</span> </div>";
+            $("#addr_content").append(city);
+
+            $.each(arr, function (i, location) {
+                var title = location.title;
+                var address = location.address;
+                var $data = "<div class='topic-type'>" +
+                    "<div class='position-p' lat='"+location.point.lat+"' lng='"+location.point.lng+"' >" +
+                    "<span class='position-title'>" + title + "</span><br /><span class='position-address'>" + address + "</span>" +
+                    "</div>" +
+
+                    "</div>";
+                $("#addr_content").append($data);
+            });
+
+            $("div[class='position-p']").on("click",function () {
+                debugger
+               var lat =  $(this).attr("lat");
+               var lng = $(this).attr("lng");
+               var title = $(this).find("span[class='position-title']").text();
+
+                objToLocalStorage("position" , {"lat":lat , "lng":lng , "title":title});
+                location.href = path+"/lunchSubject.html?time="+new Date().getTime();
+            });
+        }
+
+
+    </script>
+
+
+</head>
+
+<body>
+<div id="container" style="display: none"></div>
+<div class="wrap">
+    <div class="head">
+        <div class="header">
+            <div class="back">
+                <img src="img/icon_back.png"/>
+                <span id="">返回</span>
+            </div>
+        </div>
+    </div>
+    <div class="title">
+        我的位置
+    </div>
+    <div id="main">
+        <div class="topic-type">
+            <div class="search" id="search_div">
+                <img src="img/search.png"/>
+                <input type="text" placeholder="搜索附近位置" id="searchLocation" style="width: 100%;border-width: 0px;margin-bottom: 0.3rem;"/>
+            </div>
+        </div>
+        <div class="topic-type">
+            <div class="type-radio">
+                <label for=radio>不显示位置</label><input type="radio" name="radio" id="radio" value="" checked="checked"/>
+
+            </div>
+        </div>
+
+
+        <div class="sk-double-bounce">
+            <div class="sk-child sk-double-bounce1"></div>
+            <div class="sk-child sk-double-bounce2"></div>
+        </div>
+
+
+        <div id="addr_content">
+
+        </div>
+    </div>
+</div>
+</body>
+<script src="js/page-jump.js"></script>
+</html>

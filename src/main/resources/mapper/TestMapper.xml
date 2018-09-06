@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero.cr.dao.TestMapper">
+    <select id="listAll" resultMap="listAllMap">
+        select u.*, t.*, f.*
+        from user u
+                 left join flash f on u.user_id = f.user_id
+                 left join topic t on t.topic_id = f.topic_id
+    </select>
+    <resultMap id="listAllMap" type="com.zero.cr.vo.TestVo">
+        <association property="user" column="user_id" javaType="User" autoMapping="true"/>
+        <association property="topic" column="topic_id" javaType="Topic" autoMapping="true"/>
+        <association property="flash" column="flash_id" javaType="Flash" autoMapping="true"/>
+    </resultMap>
+
+    <select id="listAll2" resultMap="listAllMap2">
+        select u.*
+        from user u
+    </select>
+    <select id="listAll2Col" resultType="Flash">
+        select *
+        from flash
+        where user_id = #{userId}
+    </select>
+    <resultMap id="listAllMap2" type="com.zero.cr.vo.TestVo2">
+        <association property="user" javaType="User" autoMapping="true"/>
+        <collection property="flashes" column="user_id" ofType="com.zero.cr.vo.TestVo2" autoMapping="true" select="listAll2Col"/>
+    </resultMap>
+</mapper>

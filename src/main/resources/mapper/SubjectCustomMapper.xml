@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zero.cr.dao.SubjectCustomMapper">
+
+    <select id="queryAllSubject" resultType="map">
+        SELECT subject.*, topic.topic_name, topic.person_sum
+        FROM subject,
+             topic
+        WHERE subject.topic_id = topic.topic_id
+          AND subject.state = 1
+    </select>
+
+    <select id="querySbjectAndUserBySubjectId" resultType="map">
+
+        SELECT subject.subject_id,
+               subject.title,
+               subject.img,
+               topic.topic_name,
+               subject.content,
+               user.user_id,
+               user.head_img,
+               user.username,
+               user.gender,
+               subject.start_time,
+               point.lng,
+               point.lat
+        FROM subject
+                 LEFT join topic ON subject.topic_id = topic.topic_id
+                 LEFT join user ON subject.user_id = user.user_id
+                 LEFT join point ON subject.point_id = point.point_id
+        WHERE subject.subject_id = #{subjectId}
+
+    </select>
+
+    <select id="querySubjectNear" parameterType="float" resultType="map">
+        SELECT
+            subject.*,
+            topic.topic_name,
+            topic.person_sum
+        FROM
+            subject,
+            topic ,
+            point
+        WHERE subject.topic_id = topic.topic_id
+        AND subject.state = 1
+        AND point.point_id
+        IN
+        (select point_id from point where power((POWER(lat-#{lat},2)+POWER(lng-#{lng},2)),0.5) &lt; 1000) GROUP BY subject.subject_id
+    </select>
+
+
+</mapper>

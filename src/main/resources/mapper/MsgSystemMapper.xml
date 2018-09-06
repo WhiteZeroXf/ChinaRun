@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero.cr.dao.MsgSystemMapper">
+    <resultMap id="BaseResultMap" type="com.zero.cr.pojo.MsgSystem">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="mst_system_id" jdbcType="BIGINT" property="mstSystemId"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="state" jdbcType="INTEGER" property="state"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    </resultMap>
+    <select id="selectUnread" resultMap="BaseResultMap">
+      select * from msg_system
+      where user_id = #{userid} and state = 0
+  </select>
+</mapper>

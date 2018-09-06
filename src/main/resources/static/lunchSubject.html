@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="Cache" content="no-cache">
+    <script src="js/jquery-1.11.0.min.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/vue.js"></script>
+    <script type="text/javascript"
+            src="http://api.map.baidu.com/api?v=2.0&ak=4GHXGuezYfxslHUgWnMngb45RsOtVu96"></script>
+    <link rel="stylesheet" type="text/css" href="css/position.css"/>
+
+
+    <script type="text/javascript">
+
+        function pushData(arr) {
+            $("#addr_content").empty();
+
+            /*  var city = "<div class='topic-type'>" +
+                  "<div class='position-p'>" +
+                  "<span class='position-title' style='margin-bottom: 25px'>" + arr[0].city + "</span> </div>";
+              $("#addr_content").append(city);*/
+
+            $.each(arr, function (i, location) {
+                var title = location.title;
+                var address = location.address;
+                var $data = "<div class='topic-type'>" +
+                    "<div class='position-p' lat='" + location.point.lat + "' lng='" + location.point.lng + "' @click='positionPageItem()' >" +
+                    "<span class='position-title'>" + title + "</span><br /><span class='position-address'>" + address + "</span>" +
+                    "</div>" +
+
+                    "</div>";
+                $("#addr_content").append($data);
+            });
+
+            $("div[class='position-p']").on("click", function () {
+
+                var lat = $(this).attr("lat");
+                var lng = $(this).attr("lng");
+                var title = $(this).find("span[class='position-title']").text();
+                var address = $(this).find("span[class='position-address']").text();
+
+                //将选中的位置信息存入session中
+                sessionStorage.position = JSON.stringify({"lat": lat, "lng": lng});
+                /*sessionStorage.setItem("position",{
+                    "lat":lat,
+                    "lng":lng,
+                    "title":title
+                });*/
+                $("#div_position_panl").css("display", "none");
+                $("#app").css("display", "block");
+
+                app.locationMes = title += address == null || address == "" ? "" : "(" + address + ")";
+            });
+        }
+
+        var app;
+        $(function () {
+            $("textarea").empty();
+
+          /*  myAjax("/topic/queryAllByHot", {}, function (data) {
+                app.topicPageList = data;
+                for (var i = 0; i < 6; i++) {
+                    app.topicList.push(app.topicPageList[i]);
+                }
+            }, false);*/
+
+            app = new Vue({
+                el: '#app',
+                data: {
+                    imageList: [],//图片数组
+                    topicList: [],//话题数组
+                    topicPageList: [],//话题页数组
+                    positionList: [],
+                    subjectSize: 15,
+                    contentSize: 300,
+                    locationMes: '您的位置在哪？',
+                    items: {
+                        text: '',
+                    },
+                },
+                methods: {
+                    back() {
+                        history.go(-1);
+                    }, topic_back() {
+                        $("[class='page_div']").css("display", "none");
+                        $("#index").css("display", "block");
+                    },
+                    fileClick() {
+                        if (this.imageList.length >= 4) {
+                            alert("最多只能上传四张图片！");
+                            return;
+                        }
+                        document.getElementById("upload_input").click();
+                    },
+                    fileChange(el) {
+                        var fileSize = el.target.files[0].size / 1024 / 1024;
+                        if (!el.target.files[0].size)
+                            return;
+                        if (fileSize > 1) {
+                            alert("单张图片最大只支持1M！")
+                            return
+                        }
+                        this.fileList(el.target.files)
+                    },
+                    fileList(files) {
+                        for (var i = 0; i < files.length; i++) {
+                            this.fileAdd(files[i]);
+                        }
+                    },
+                    fileAdd(file) {
+                        var reader = new FileReader();
+                        reader.vue = this;
+                        reader.readAsDataURL(file);
+                        reader.onload = function () {
+                            file.src = this.result;
+                            this.vue.imageList.push({file})
+                        }
+                    },
+                    fileDel(index) {
+                        this.imageList.splice(index, 1);
+                    }, location() {
+                        /*选择位置*/
+                        $("[class='page_div']").css("display", "none");
+                        $("#div_position").css("display", "block");
+
+                        var flag = false;
+                        var displayPOI = null;
+                        var map = new BMap.Map("container");
+                        var geolocation = new BMap.Geolocation();
+                        geolocation.getCurrentPosition(function (p) {
+                            if (this.getStatus() == BMAP_STATUS_SUCCESS) {
+                                flag = true;
+                                $(".sk-double-bounce").attr("style", "display:none;");
+                                var mPoint = new BMap.Point(p.point.lng, p.point.lat);
+                                map.centerAndZoom(mPoint, 16);
+                                //map.enableScrollWheelZoom(); //启用滚轮缩放
+                                var mOption = {
+                                    poiRadius: 1000, //半径为1000米内的POI,默认100米
+                                    numPois: 50 //列举出50个POI,默认10个
+                                }
+                                var myGeo = new BMap.Geocoder(); //创建地址解析实例
+                                displayPOI = function () {
+                                    var addressJson = new Array();
+                                    //map.addOverlay(new BMap.Circle(mPoint, 1000)); //添加一个圆形覆盖物
+                                    myGeo.getLocation(mPoint,
+                                        function mCallback(rs) {
+                                            var allPois = rs.surroundingPois; //获取全部POI（该点半径为100米内有6个POI点）
+                                            app.positionList = rs.surroundingPois;
+                                        }, mOption
+                                    );
+                                }
+                                //获取详细内容
+                                displayPOI();
+                            }
+                        });
+                        //搜索位置点击响应函数
+                        $("#search_div").on("click", function () {
+                            if (!flag) {
+                                alert("正在搜索位置");
+                                $("#searchLocation").blur();
+                                return;
+                            }
+                            $("#searchLocation").focus();
+                        });
+                        //失去焦点
+                        $("#searchLocation").blur(function () {
+                            if (!flag) {
+                                return;
+                            }
+                            if ($(this).val().length == 0) {
+                                displayPOI();
+                            }
+                            ;
+                            $(this).val("");
+                        });
+
+                        $("#searchLocation").on("change", function () {
+                            if ($(this).val().length == 0) {
+                                displayPOI();
+                                return
+                            }
+                            var options = {
+                                onSearchComplete: function (results) {
+                                    if (local.getStatus() == BMAP_STATUS_SUCCESS) {
+                                        // 判断状态是否正确
+                                        var s = [];
+                                        for (var i = 0; i < results.getCurrentNumPois(); i++) {
+                                            s.push({
+                                                "city": results.getPoi(i).city,
+                                                "title": results.getPoi(i).title,
+                                                "address": results.getPoi(i).address,
+                                                "point": results.getPoi(i).point
+                                            });
+                                        }
+                                        pushData(s);
+                                    }
+                                }
+                            };
+                            var local = new BMap.LocalSearch(map, options);
+                            local.search($(this).val());
+                        });
+
+
+                    }, /*==========location end===========*/
+                    noShowPoint() {
+                        $("[class='page_div']").css("display", "none");
+                        $("#index").css("display", "block");
+                        this.locationMes = "不显示位置";
+                    },
+                    submit_fun() {
+                        //标题
+                        var title = $("#input_title").val();
+                        if (!title) {
+                            alert("输入你的主题")
+                            return
+                        }
+                        //描述
+                        var content = $("textarea").val();
+                        if (!content) {
+                            alert("描述你的主题故事")
+                            return
+                        }
+                        //话题
+                        var topicId = sessionStorage.getItem("topicId");
+                        if (!topicId) {
+                            alert("请至少选择一个话题")
+                            return
+                        }
+                        if (!confirm("确认提交？")) {
+                            return;
+                        }
+                        //图片
+                        var images = app.imageList;
+                        //拼接图片字符串.
+                        var imgStr = "";
+                        for (var i = 0; i < images.length; i++) {
+                            imgStr += (JSON.stringify(images[i]));
+                            if (i < images.length - 1) {
+                                imgStr += "%%"
+                            }
+                        }
+
+                        //用户ID
+                        var userId = localStorageToObj("user").userId;
+                        //经纬度
+                        var point;
+                        if (sessionStorage.position) {
+                            point = JSON.parse(sessionStorage.position).point;
+                        } else {
+                            point = {"lng": -1, "lat": -1};
+                        }
+
+                        var data = {
+                            "title": title,
+                            "topicId": topicId,
+                            "content": content,
+                            "userId": userId,
+                            "lng": point.lng,
+                            "lat": point.lat,
+                            "imgStr": imgStr
+                        };
+
+                        myAjax("/subject/addSubject", data, function (data) {
+                            alert("主题发起成功");
+                            location.href = path+"/index.html";
+                        });
+
+                    }, /*=========================submit end====================*/
+                    moreTopic() {
+                        $("[class='page_div']").css("display", "none");
+                        $("#topicPage").css("display", "block");
+                    }, topicClick(index) {
+                        var pageList = this.topicPageList;
+
+                        for (var i = 0; i < this.topicList.length; i++) {
+                            if (pageList[index].topicId == this.topicList[i].topicId) {
+                                //alert(pageList[index].topicId)
+                                $("[class='page_div']").css("display", "none");
+                                $("#index").css("display", "block");
+                                return
+                            }
+                        }
+                        this.topicList.unshift(pageList[index]);
+                        $("[class='page_div']").css("display", "none");
+                        $("#index").css("display", "block");
+                    }, positionPageItem(index) {
+                        this.locationMes = this.positionList[index].title + "(" + this.positionList[index].address + ")";
+                        sessionStorage.setItem("position", JSON.stringify(this.positionList[index]));
+                        $("[class='page_div']").css("display", "none");
+                        $("#index").css("display", "block");
+                    }, topicSubjectClick(el, topicId) {
+                        $("span[class='topic']").css("background", "");
+                        el.target.style.background = 'red';
+                        sessionStorage.setItem("topicId", topicId);
+                    }
+                }
+            });
+
+            myAjax("/topic/queryAllByHot", {}, function (data) {
+                app.topicPageList = data;
+                for (var i = 0; i < 6; i++) {
+                    app.topicList.push(app.topicPageList[i]);
+                }
+            }, false);
+
+        });
+        function checkLeave() {
+            sessionStorage.clear();
+        }
+    </script>
+
+</head>
+<body onbeforeunload="checkLeave()">
+
+<!-----------------------------------位置--------------------------------------->
+<div id="app">
+    <div id="div_position" class="page_div" style="display: none;">
+        <div id="container" style="display: none"></div>
+        <div class="wrap">
+            <div class="head">
+                <div class="header">
+                    <div class="back">
+                        <img src="img/icon_back.png"/>
+                        <span @click="topic_back()" style="position: relative;left: -10px;font-size: 18px;">返回</span>
+                    </div>
+                </div>
+            </div>
+            <div class="title">
+                我的位置
+            </div>
+            <div id="main">
+                <div class="topic-type">
+                    <div class="search" id="search_div">
+                        <img src="img/search.png"/>
+                        <input type="text" placeholder="搜索附近位置" id="searchLocation"
+                               style="width: 100%;border-width: 0px;margin-bottom: 0.3rem;"/>
+                    </div>
+                </div>
+                <div class="topic-type" @click="noShowPoint()">
+                    <div class="type-radio">
+                        <label for=radio>不显示位置</label><input type="radio" name="radio" id="radio" value=""
+                                                             checked="checked"/>
+
+                    </div>
+                </div>
+
+                <div class="sk-double-bounce">
+                    <div class="sk-child sk-double-bounce1"></div>
+                    <div class="sk-child sk-double-bounce2"></div>
+                </div>
+
+                <div id="addr_content">
+                    <div class='topic-type' v-for="(item,index) of positionList">
+                        <div class='position-p' @click="positionPageItem(index)">
+                            <span class='position-title'>{{item.title}}</span><br/>
+                            <span class='position-address'>{{item.address}}</span>
+                            <!--<div style="display: none;">
+                                <span>{{index}}</span>
+                            </div>-->
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!--------------------------分割线------------------------------------->
+    <div class="page_div" id="index">
+        <div class="lunchSubject_head" style="font-family: 'Microsoft YaHei UI'">
+            <span @click="back()">
+                 <img src="img/icon_back.png" style="width: 12px;margin-left: 10px;">
+                <span style="font-size: 18px;color: gray;">返回</span>
+            </span>
+
+            <span id="submit_btn;" @click="submit_fun($event)" style="float: right;margin-right: 18px;">提交</span>
+            <div style="margin-left: 20px;">我要发起</div>
+        </div>
+
+        <div>
+
+            <div style="border-bottom: 1px solid gray;margin: 10px 20px;">
+                <input type="text" id="input_title" placeholder="请输入主题" maxlength="15"
+                       style="border-width: 0px;font-size: 20px;"/>
+                <span style="font-size: 15px;position: relative;top: 2px;right: -55px;color: gray;"> {{subjectSize}}<span>/15</span></span>
+            </div>
+
+            <div style="margin: 5px 15px;">
+                <!--  <span style="color: gray;font-size: 20px;">描述主题故事</span>
+                  <br/>-->
+                <textarea placeholder="描述主题故事" maxlength="300"
+                          style="width: 96%;height:1.4rem;border-width:0px;font-size: 15px;">
+            </textarea>
+                <div style="position: relative;top: -10px;">
+                    <span style="font-size: 15px;position: relative;top: 0px;left: 0px;color: gray;"> {{contentSize}}<span>/300</span></span>
+                    <hr style="margin: 0px;"/>
+                </div>
+            </div>
+
+        </div>
+
+        <div style="border-width: 2px">
+
+            <div style="margin-bottom: 20px;">
+                <span style="font-size: 0.4rem;color: gray;margin-left: 20px;">选择热门话题</span>
+                <span style="float: right;margin-right: 20px;font-size: 0.4rem;color: gray;"
+                      @click="moreTopic()">查看更多<img
+                        src="img/icon_back1.png" style="width: 15px"></span>
+            </div>
+
+            <div id="div_topics">
+                <div style="margin-left: 20px;">
+                    <!--话题-->
+                    <div v-for="(item,index) of topicList">
+                <span class='topic' @click="topicSubjectClick($event,item.topicId)">
+                    #{{item.topicName}}#
+                </span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div style="clear: both;font-size: 15px;margin: 0px 20px;" @click="location()">
+            <hr/>
+            <div style="float: left;width: 86%;">{{locationMes}}</div>
+            <div style="position: relative;top: auto;">
+                <img src="img/add.png" style="width: 20px;float: right;margin-right: 20px;"/>
+            </div>
+            <hr style="clear: both;position: relative;top: 5px;"/>
+        </div>
+
+        <div id="upload_app">
+            <input accept="image/*" type="file" id="upload_input" @change="fileChange($event)" multiple
+                   style="display: none;"/>
+            <div id="images" class="upload_warp_img_div" v-for="(item,index) of imageList">
+                <div>
+                    <img src="img/Close button.png" class="upload_warp_img_div_del"
+                         style="width: 16px;height: 16px;!important;" @click="fileDel(index)">
+                </div>
+                <img class="file_image" :src="item.file.src">
+            </div>
+            <div @click="fileClick" style="float: left;margin-top: 10px;">
+                <img src="img/upload.png" style="width: 80px;height: 80px;margin-bottom: 1rem;margin-left: 20px;">
+            </div>
+        </div>
+    </div>
+
+
+    <!--------------------------------------->
+    <div class="page_div" id="topicPage" style="clear: both;display: none;">
+        <div class="lunchSubject_head" style="font-family: 'Microsoft YaHei UI' ">
+            <img src="img/icon_back.png" style="width: 12px;margin-left: 10px;">
+            <span style="font-size: 18px;color: gray;" @click="topic_back()">返回</span>
+            <div style="margin-left: 20px;margin-bottom: 20px;">话题</div>
+        </div>
+
+        <div v-for="(item,index) of topicPageList">
+            <div style="margin: 0px 20px;" @click="topicClick(index)">
+                <span style="font-size: 12px;">
+                    <span style="display: none;">{{index}}</span>
+                    #{{item.topicName}}#
+                </span>
+                <hr style="position: relative;top: -6px;"/>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

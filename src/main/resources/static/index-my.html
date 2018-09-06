@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="css/My.css"/>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <script src="js/jquery-1.11.0.min.js"></script>
+    <script src="js/popper.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/element.js"></script>
+    <script src="js/vue.js"></script>
+</head>
+
+<body>
+<div class="wrap" id="wrap">
+    <template>
+    <div class="top">
+        <div class="bg-one">
+            <div class="Head-portrait">
+                <!--头像-->
+                <img :src="user.headImg" class="jump-my-personal" id="img-head"/>
+            </div>
+            <div v-bind="user">
+                <div class="top-content">
+                    <div class="set">
+                        <!--设置按钮-->
+                        <img class="jump-MySet" src="img/icon-set.png"/>
+                        <!--消息按钮-->
+                        <img class="jump-Notification" src="img/icon-mes.png"/>
+                    </div>
+                    <div class="name jump-my-personal">
+                        <!--性别-->
+                        <span id="username" name="username" v-text="user.username"></span>
+                        <span v-if="user.gender=='男'"><img src="img/icon-man.png"/></span>
+                        <span v-else-if="user.gender=='女'"><img src="img/icon-woman.png"/></span>
+                    </div>
+                    <div class="autograph  jump-my-personal">
+                        <!--个人签名-->
+                        <ul v-text="user.sign"></ul>
+                    </div>
+                    <div class="img-goin jump-my-personal">
+                        <!--右侧箭头-->
+                        <img src="img/icon_back1.png"/>
+                    </div>
+                    <div class="fans-follow">
+                        <!--粉丝数-->
+                        <div class="fans jump-my-fans">
+                            粉丝<br/>
+                            <span id="fans" v-text="user.fansSum">
+                                 </span>
+                        </div>
+                        <!--关注数-->
+                        <div class="follow jump-my-follow">
+                            关注<br/>
+                            <span id="follow" v-text="user.followSum">
+                                 </span>
+                        </div>
+                    </div>
+                </div>
+                <!--头像背景图-->
+                <img src="img/shape.png" id="img-bg"/>
+            </div>
+        </div>
+    </div>
+    <div class="main">
+        <div class="main-milage">
+            个人贡献里程／km<br/>
+            <span id="main-milage" v-text="user.contributeMils">
+                    </span>
+        </div>
+        <div class="contr">
+            <div class="time">
+                贡献小时／h<br/>
+                <span id="time" v-text="user.contributeHours">
+                        </span>
+            </div>
+            <div class="number">
+                贡献次数／次<br/>
+                <span id="a_number" v-text="user.contributeSum">
+                </span>
+            </div>
+        </div>
+    </div>
+    </template>
+</div>
+<div class="MyAct">
+    <div class="run jump-my-run">
+        <img src="img/icon-myrun.png"/><br/>
+        我的快跑
+    </div>
+    <div class="start jump-my-mystart">
+        <img src="img/icon-mystart.png"/><br/>
+        我的发起
+    </div>
+    <div class="journal">
+        <img src="img/icon-myjournal.png"/><br/>
+        快跑日志
+    </div>
+</div>
+
+<div class="footer ">
+    <ul class="tab_bar ">
+        <li class="find jump-discover"><img src="img/icon-explore.png"/>发现</li>
+        <li class="Run jump-index"><img src="img/icon-run.png"/>快跑</li>
+        <li class="my"><img src="img/icon-my.png "/>我的</li>
+    </ul>
+</div>
+</body>
+<script>
+    $(function () {
+        var userId = localStorageToObj("user")["userId"];
+        myAjax("/user/getById", {"userId": userId}, function (result) {
+            var wrap = new Vue({
+                el: '#wrap',
+                data: {
+                    user:result
+                }
+            });
+
+            $(".jump-my-personal").on("click", function () {
+                window.location.replace("my-personal.html");
+            });
+            $(".jump-MySet").on("click", function () {
+                window.location.replace("MySet.html");
+            });
+            $(".jump-Notification").on("click", function () {
+                window.location.replace("Notification.html");
+            });
+            $(".jump-my-fans").on("click", function () {
+                window.location.href = "my-fans.html";
+            });
+            $(".jump-my-follow").on("click", function () {
+                window.location.href = "my-follow.html";
+            });
+        });
+    });
+</script>
+<script src="js/page-jump.js"></script>
+</html>

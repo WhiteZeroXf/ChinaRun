@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="css/ThematicDetails.css"/>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+
+    <script type="text/javascript"
+            src="http://api.map.baidu.com/api?v=2.0&ak=4GHXGuezYfxslHUgWnMngb45RsOtVu96"></script>
+    <script src="js/jquery-1.11.0.min.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/element.js"></script>
+    <script type="text/javascript" src="js/mui.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/mui.min.css"/>
+
+    <script type="text/javascript">
+        //获取当前登录用户
+        var user = localStorageToObj("user");
+        //获取当前主题ID
+        var subjectId = localStorageToObj("subjectId");
+
+
+
+        $(function () {
+            myAjax("/subject/querySubjectById", {subjectId: subjectId}, function (data) {
+
+                objToLocalStorage("TAId", data.user_id);
+
+                objToLocalStorage("subject", data);
+                //标题
+                $("[class='fir_title']").text(data.title);
+                //话题
+                $("[class='sec_title']").text("#" + data.topic_name + "#");
+                //描述
+                $("span[id='content_span']").text(data.content.replace("\n", "<br />"));
+                //头像    <div class="head_img">
+                $("div[class='head_img']").append("<img class='jump-ta' src='" + data.head_img + "'/>");
+                //昵称
+                $("div[class='name']").find("ul").first().text(data.username);
+                //性别图片
+                if (data.gender == '男') {
+                    //<img src="img/icon-man.png"/>
+                    $("div[class='name']").find("ul").last().append("<img src='img/icon-man.png'/>");
+                } else {
+                    $("div[class='name']").find("ul").last().append("<img src='img/icon-woman.png' />")
+                }
+                //发起时间
+                $("ul[class='time_two']").first().text(data.start_time.split(" ")[0]);
+                //发起位置
+                getLocation(data.lng, data.lat);
+                //图片
+                appendImages(data.images);
+                //验证是否参与了主题
+                isJoinSubject(subjectId, user.userId);
+                //验证粉丝
+                isFans(data.user_id, user.userId);
+                myAjax("/subject/getSubjectById", {"subjectId": data["subject_id"]}, function (data) {
+                    objToLocalStorage("subject", data);
+                });
+                $(".jump-ta").on("click",function () {
+                    var taId = localStorageToObj("TAId");
+                    if(user.userId == taId){
+                        window.location.href = "index-my.html";
+                        return;
+                    }
+                    window.location.href = "index-TA.html";
+                });
+            });
+
+
+            /**
+             * 一键报名函数
+             */
+            $("div[class='footer']").on("click", function () {
+                var $idenitfy = $(this).find("div").attr("idenitfy");
+                if ($idenitfy == "run") {
+                    /*去跑步*/
+                    window.location.href = "run/Begin.html";
+                    return;
+                }
+
+                var joinSubjectData = {subjectId: subjectId, userId: user.userId};
+                myAjax("/subject/joinSubject", joinSubjectData, function (data) {
+                    if (data == 0) {
+                        mui.toast("已成功报名该主题");
+                        isJoinSubject(subjectId, user.userId);
+                    }
+                });
+            });
+
+            $(".jump-ta").on("click",function () {
+                var taId = localStorageToObj("TAId");
+                if(user.userId == taId){
+                    window.location.href = "index-my.html";
+                    return;
+                }
+                window.location.href = "index-TA.html";
+            });
+        });
+
+        /**
+         * 验证是否参与了主题
+         */
+        function isJoinSubject(subjectId, userId) {
+            var subUserId = localStorageToObj("subject").user_id;
+            //该主题是自己发起
+            if (subUserId == userId) {
+                $("div[class='footer']").css("display", "block");
+                $("#div_signUp").attr("idenitfy", "run");
+                $("#div_signUp").text("去跑步");
+                return
+            }
+            var joinSubjectData = {subjectId: subjectId, userId: userId};
+            myAjax("/subject/isJoinSubject", joinSubjectData, function (data) {
+                $("div[class='footer']").css("display", "block");
+                if (data == 0) {
+                    $("#img_signUp").css("display", "block");
+                    $("#div_signUp").attr("idenitfy", "run");
+                    $("#div_signUp").text("去跑步");
+                } else {
+                    $("#div_signUp").attr("idenitfy", "signUp");
+                    $("#div_signUp").text("一键报名");
+                }
+            });
+        }
+
+        //关注点击事件
+        function follow_click(num, isUserId, nowUserId) {
+            if (num == 1) {
+                if (!confirm("确定取消关注？")) {
+                    return;
+                }
+            }
+            var followData = {state: num, userId: isUserId, userFansId: nowUserId};
+            myAjax("/subject/followController", followData, function (data) {
+                if(num == 1){
+                    mui.toast("已取消关注")
+                }else{
+                    mui.toast("已关注")
+                }
+                isFans(isUserId, nowUserId);
+            });
+        }
+
+        /**
+         * 验证粉丝功能,传入当前用户ID
+         * isUserId 发起主题用户的ID
+         * nowUserId 当前用户的ID
+         */
+        function isFans(isUserId, nowUserId) {
+            //该主题发起人是自己
+            if (isUserId == nowUserId) {
+                $("div[class='follow_person']").css("display", "none");
+            }
+            var isFansData = {userId: isUserId, userFansId: nowUserId};
+            myAjax("/subject/isFans", isFansData, function (data) {
+                $("div[class='follow_person']").empty();
+                if (data == 0) {
+                    $("div[class='follow_person']").append("<img src='img/button-quxiaoguanzhu.png' onclick='follow_click(1 , " + isUserId + " ," + nowUserId + ")'/>");
+                } else {
+                    $("div[class='follow_person']").append("<img src='img/button-follow.png' onclick='follow_click(0 ,  " + isUserId + " ," + nowUserId + ")'/>");
+                }
+            });
+        }
+
+        //添加图片
+        function appendImages(images) {
+            if (!images) {
+                return;
+            }
+            //获取图片的容器
+            var $img_div = $("div[class='img']");
+            $img_div.empty();
+            $.each(images, function (i, elt) {
+                $img_div.append("<img src='" + elt + "'/>");
+            });
+        }
+
+        //解析发起位置
+        function getLocation(lng, lat) {
+            if (!lng || !lat) {
+                return "";
+            }
+            var myGeo = new BMap.Geocoder();
+            myGeo.getLocation(new BMap.Point(lng, lat), function (result) {
+                if (result) {
+                    $("ul[class='address_two']").text(result.address);
+                }
+            });
+        }
+
+        function lunchSubjectPage() {
+            window.location.href = "lunchSubject.html";
+        }
+
+    </script>
+
+    <style type="text/css">
+        body{
+            background: white;
+        }
+        #img_signUp {
+            display: none;
+            float: right;
+            margin-right: 10%;
+        }
+
+        .mui-toast-container {bottom: 50% !important;}
+
+
+    </style>
+</head>
+
+<body>
+<div class="wrap">
+    <div class="head">
+        <div class="header">
+            <div class="back" id="img-black">
+                <img src="img/icon_back.png"/>
+                <span>返回</span>
+            </div>
+            <!--<div class="share">
+                <img src="img/icon-share.png"/>
+            </div>-->
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="title">
+            <div>
+                <div class="fir_title">
+                    <!--主题-->
+                </div>
+                <span id="img_signUp"><img src="img/sign.png" style="width: 80px;height: 30px;"></span>
+            </div>
+
+            <div class="sec_title">
+                <!--话题-->
+            </div>
+        </div>
+        <div class="content_up">
+            <div class="describe">
+						<span id="content_span">
+						     <!--描述-->
+						</span>
+            </div>
+            <div class="img">
+
+                <!--<img src="img/card2.png"/>
+                <img src="img/card4.png"/>-->
+
+            </div>
+        </div>
+        <div class="content_down">
+					<span>
+						发起人
+					</span>
+            <div class="person">
+                <!--头像-->
+                <div class="head_img">
+
+                </div>
+                <div class="name">
+                    <ul class="jump-ta">
+                        <!--用户昵称-->
+                    </ul>
+                    <ul>
+                        <!--<img src="img/icon-man.png"/>-->
+                    </ul>
+
+                </div>
+                <div class="follow_person">
+                    <!--关注图片-->
+                </div>
+            </div>
+            <div class="time">
+                <ul class="time_one">
+                    发起时间
+                </ul>
+                <ul class="time_two">
+                    <!--发起时间-->
+                </ul>
+            </div>
+            <div class="address">
+                <ul class="address_one">
+                    发起地点
+                </ul>
+                <ul class="address_two">
+                    <!--发起地点-->
+                </ul>
+            </div>
+        </div>
+        <div class="main_foot">
+            <div class="launch" onclick="lunchSubjectPage()">
+                <img src="img/icon-launch.png"/>
+                我要发起
+            </div>
+        </div>
+    </div>
+    <div class="footer" style="display: none;">
+        <div class="signup" idenitfy="signUp" id="div_signUp">
+            一键报名
+        </div>
+        </a>
+    </div>
+</div>
+</body>
+
+</html>

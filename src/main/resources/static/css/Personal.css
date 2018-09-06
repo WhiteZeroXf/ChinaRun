@@ -1,0 +1,35 @@
+html{font-size: 50px;}
+body{font-size: 0.14rem /*实际相当于14px*/}
+
+*{margin: 0rem;padding: 0rem;}
+body{margin: 0rem;padding: 0rem;width: 100%;font-family: PingFangSC-Semibold;background: #EEEFF3;}
+ul li{list-style-type: none;}
+a{text-decoration: none;}
+
+.head{position: fixed;width: 100%;top: 0;font-size: 0.28rem;letter-spacing: 0;}
+.header{height: 0.66rem;background-color: white;display: flex;justify-content: space-between;align-items: flex-end;padding-left: 0.5rem;padding-right: 0.5rem;padding-bottom: 0.24rem;}
+.back{font-family: PingFangSC-Semibold;color: #AAADB9;width: 20%;display: flex;align-items: center;}
+.back img{width: auto;height: 0.28rem;padding-right: 0.16rem;}
+.submit{display: flex;align-items: flex-end;color: #1C202A;line-height: 0.28rem;}
+
+
+.main{width: 100%;}
+.title{margin-top: 0.9rem;font-size: 0.44rem;color: #1C202A;line-height: 0.44rem;padding-left: 0.48rem;height: 0.44rem;padding-bottom: 0.4rem;border-bottom: 0.1rem solid #EEEFF3;background: #FFFFFF;}
+
+.content{width: 100%;margin-top: 0.1rem;background: #FFFFFF;}
+.about{background: #FFFFFF;border-bottom: 0.02rem solid #D8D8D8;font-family: PingFangSC-Medium;font-size: 0.3rem;color: #1C202A;display: flex;justify-content: space-between;padding: 0.29rem 0.51rem 0.35rem 0.51rem;align-items: center;}
+.img{display: flex;align-items: center;}
+.img img{width: auto;height: 0.24rem;}
+.img-head img{width: 0.9rem !important;height: 0.9rem !important;margin-right: 0.15rem;}
+
+.name{padding-right: 0.12rem;border: none;outline: none;text-align: end;}
+
+.input-choose{display: flex;align-items: center;}
+.man,.woman{width: auto;height: 0.3rem;}
+.man{padding-right: 0.25rem;}
+.man input,.woman input{width: 0.3rem;height: 0.3rem;border: none;outline: none;background: #C0C5D6;margin-right: 0.09rem;}
+
+#qm{background: #FFFFFF;width: 100%;}
+.qm-one{font-family: PingFangSC-Medium;font-size: 0.3rem;color: #1C202A;padding-bottom: 0.32rem;padding-top: 0.3rem;width: 87%;border-bottom: 0.02rem solid #D8D8D8;display: flex;justify-content: space-between;margin-left: auto;margin-right: auto;}
+#qm textarea{font-family: PingFangSC-Regular;font-size: 0.3rem;color: #AAADB9;border-bottom: 0.02rem solid #D8D8D8;margin-bottom: 0.32rem;border: none;outline: none;width: auto;padding-left: 0.51rem;padding-right: 0.51rem;width: 87%;}
+.lx{font-family: PingFangSC-Regular;font-size: 0.3rem;color: #AAADB9;padding-top: 0.3rem;}

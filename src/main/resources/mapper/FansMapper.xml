@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero.cr.dao.FansMapper">
+
+    <resultMap id="BaseResultMap" type="com.zero.cr.pojo.Fans">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="fans_id" jdbcType="BIGINT" property="fansId"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="user_fans_id" jdbcType="BIGINT" property="userFansId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    </resultMap>
+
+
+    <select id="queryFansByuserIdAnduserFansId" parameterType="long" resultType="Fans">
+
+        SELECT *
+        FROM fans
+        WHERE fans.user_id = #{userId}
+          AND fans.user_fans_id = #{userFansId}
+
+    </select>
+
+    <!--添加关注-->
+    <insert id="addFans" parameterType="Fans">
+
+        INSERT INTO fans (user_id, user_fans_id, create_time)
+        VALUES (#{userId}, #{userFansId}, now());
+
+    </insert>
+
+    <!--取消关注-->
+    <delete id="removeFans" parameterType="Fans">
+
+        DELETE
+        FROM fans
+        WHERE user_id = #{userId}
+          AND user_fans_id = #{userFansId}
+
+    </delete>
+
+
+    <resultMap id="userMap" type="com.zero.cr.vo.FansUserBean">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="fans_id" jdbcType="BIGINT" property="fansId"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="user_fans_id" jdbcType="BIGINT" property="userFansId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+    </resultMap>
+    <resultMap id="userMap1" type="com.zero.cr.vo.FansUserBean1">
+        <id column="fans_id" jdbcType="BIGINT" property="fansId"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="user_fans_id" jdbcType="BIGINT" property="userFansId"/>
+        <result column="gender" jdbcType="VARCHAR" property="gender"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="head_img" jdbcType="VARCHAR" property="headImg"/>
+        <result column="contribute_mils" jdbcType="FLOAT" property="contributeMils"/>
+    </resultMap>
+    <select id="selectFansUser" resultMap="userMap">
+        select fans.fans_id, fans.user_id, fans.user_fans_id, fans.create_time, user.username
+        from fans
+                 inner join user on fans.user_fans_id = user.user_id
+    </select>
+    <select id="getFansById" resultType="map">
+        select f.user_fans_id    userFansId,
+               u.username        username,
+               u.gender          gender,
+               u.head_img        headImg,
+               u.contribute_mils contributeMils,
+               f.fans_id         isFans,
+               follow.fans_id    isFollow
+        from user u
+                 left join fans f on f.user_id = #{userId} and f.user_fans_id = u.user_id
+                 left join fans follow on follow.user_fans_id = #{userId} and follow.user_id = u.user_id
+        where f.user_id = #{userId}
+        order by f.create_time DESC
+    </select>
+    <select id="getFollowById" resultType="map">
+        select f.user_id         userId,
+               u.username        username,
+               u.gender          gender,
+               u.head_img        headImg,
+               u.contribute_mils contributeMils,
+               f.fans_id         isFans,
+               follow.fans_id    isFollow
+        from user u
+                 left join fans f on f.user_fans_id = #{userId} and f.user_id = u.user_id
+                 left join fans follow on follow.user_id = #{userId} and follow.user_fans_id = u.user_id
+        where f.user_fans_id = #{userId}
+        order by f.create_time DESC
+    </select>
+
+    <!--查询主键Id-->
+    <select id="selectFansId" resultType="int">
+
+        select fans_id from fans where  user_id=#{userId} and user_fans_id=#{userFansId}
+    </select>
+</mapper>

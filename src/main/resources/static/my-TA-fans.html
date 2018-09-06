@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="css/Fans.css"/>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <script src="js/jquery-1.11.0.min.js"></script>
+    <script src="js/popper.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/element.js"></script>
+    <script src="js/vue.js"></script>
+    <script>
+        var userId = localStorageToObj("TaToTaFanId");
+        $(function () {
+            myAjax("/fans/getFansById", {"userId": userId}, function (result) {
+                var wrap = new Vue({
+                    el: '#wrap',
+                    data: {
+                        fans: result,
+                        userId: userId
+                    },
+                    methods: {
+                        ToFans(data) {
+                            objToLocalStorage("MyToTaId", data.fans1Id);
+                            window.location.href = path + "/index-TA2.html";
+                        }
+                    }
+                });
+                $(".jump-back").on("click", function () {
+                    window.history.back();
+                });
+                //用户关注
+                $(".follow").find("img[name='follow']").on('click', function () {
+                    var now = $(this);
+                    var userFansId = userId;
+                    var userId1 = $(this).siblings("input[name='userId']").val();
+                    var state = 0;
+                    console.log(userFansId);
+                    console.log(userId1);
+                    myAjax("/fans/addFans", {
+                        "state": state,
+                        "userId": userId1,
+                        "userFansId": userFansId
+                    }, function (data) {
+                        if (data) {
+                            now.attr("src", "img/huxiang.png")
+                        } else {
+                            now.attr("src", 'img/button-follow.png')
+                        }
+                    });
+                });
+            });
+
+
+        });
+    </script>
+</head>
+<body>
+<div class="wrap" id="wrap">
+    <div class="head">
+        <div class="header">
+            <div class="back jump-back">
+                <img src="img/icon_back.png"/>
+                <span id="">返回</span>
+            </div>
+        </div>
+    </div>
+    <div id="main">
+        <div class="title">
+            Ta的粉丝
+        </div>
+        <template>
+        <div class="topic-type" v-for="fan in fans">
+            <div class="type-head" @click="ToFans({fans1Id:fan.userFansId})">
+                <img :src="fan.headImg"/>
+            </div>
+            <div class="type-name">
+                <div class="name-mile">
+							<span id="name" v-text="fan.username">
+							</span>
+                    <span v-if="fan.gender=='男'"><img src="img/icon-man.png"/></span>
+                    <span v-else-if="fan.gender=='女'"><img src="img/icon-woman.png"/></span><br/>
+                    已贡献<span id="mile" v-text="fan.contributeMils">
+							</span>km
+                </div>
+                <div class="follow">
+
+                        <span v-if="fan.userId !=userId">
+                          <span v-if="fan.isFans ==null  ">
+                        <img src="img/button-follow.png" name="follow"/>
+                            <input type="hidden" name="userId" v-model="fan.userFansId">
+                        </span>
+                        <span v-if="fan.isFollow !=null && fan.isFans !=null">
+                        <img src="img/huxiang.png"/>
+                        </span>
+                        </span>
+
+                </div>
+            </div>
+        </div>
+        <div v-if="fans.length<=0">
+            <img src="img/Page%201.png" style="margin-left: 1rem;margin-top: 0.5rem"/>
+            <h1 style="margin-left: 2.2rem;color: #6c757d;font-size: 20px">对方还没有粉丝</h1>
+        </div>
+        </template>
+    </div>
+</div>
+</body>
+<script src="js/page-jump.js"></script>
+</html>

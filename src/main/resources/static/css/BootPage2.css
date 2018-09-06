@@ -1,0 +1,17 @@
+html{font-size: 50px;}
+body{font-size: 0.14rem /*实际相当于14px*/}
+
+*{margin: 0rem;padding: 0rem;}
+body{margin: 0rem;padding: 0rem;width: 100%;font-family: PingFangSC-Semibold;}
+ul li{list-style-type: none;}
+a{text-decoration: none;}
+
+.main{width: 100%;}
+#yd-two{width: 100%;height: 100%;position: absolute;z-index: -1;}
+.big{padding-top: 1.6rem;margin-left: auto;margin-right: auto;width: 4.85rem;height: 2.25rem;}
+.big img{width: 4.85rem;height: 2.25rem;}
+
+.down{margin-top: 7.45rem;}
+.box-row{margin-left: auto;margin-right: auto;width: 77%;color: #FFFFFF;text-align: center;}
+.box1 h3{font-size: 0.3rem;font-family: PingFangSC-Semibold;}
+.box2 h3{font-family: PingFangSC-Semibold;font-size: 0.24rem;margin-top: 0.21rem;}

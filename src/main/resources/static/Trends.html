@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html xmlns:v-bind="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="css/Trends.css"/>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <script src="js/jquery-1.11.0.min.js"></script>
+    <script src="js/thirdparty/jqPaginator.js"></script>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="js/common.js"></script>
+    <script src="js/vue.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+
+</head>
+<script>
+    var nowflash;
+    var nowComment;
+
+    //日志点赞
+    function zanFlash(userId) {
+        $(".xin").find("img[name='xin']").on('click', function () {
+            var flashId = $(this).siblings("input[name='flashId']").val();
+            var supportNum = Number($(this).siblings("span[name='supportNum']").text());
+
+            var now = $(this);
+
+            myAjax("/flash/zan", {"id": flashId, "userId": userId}, function (data) {
+                if (data > 0) {
+                    supportNum--;
+                    now.attr("src", 'img/icon-xin.png')
+                    now.siblings("span[name='supportNum']").text(supportNum);
+
+                } else {
+                    supportNum++;
+                    now.attr("src", 'img/icon-xinRed.png')
+                    now.siblings("span[name='supportNum']").text(supportNum);
+
+                }
+            });
+
+
+        })
+
+    }
+
+    //用户关注
+    function toFollow(userId) {
+        $(".follow").find("img[name='follow']").on('click', function () {
+            var now = $(this);
+            var userFansId = userId;
+            var userId1 = $(this).siblings("input[name='userId']").val();
+            var state = 0;
+            myAjax("/fans/addFans", {"state": state, "userId": userId1, "userFansId": userFansId}, function (data) {
+                debugger;
+                if (data) {
+                    now.attr("src", "img/icon-xinRed.png")
+                } else {
+                    now.attr("src", 'img/button-follow.png')
+                }
+            });
+
+
+        })
+
+    }
+
+    //评论点赞
+    function zanComment(userId) {
+        $("#BOSS").find("img[name='pingZan']").on('click', function () {
+            var typeId = $(this).siblings("input[name='commentId']").val();
+            var now = $(this);
+            var supportSum = Number($(this).siblings("span[name='supportSum']").text());
+            myAjax("/comment/zanComment", {"userId": userId, "typeId": typeId}, function (data) {
+                if (data > 0) {
+                    supportSum++;
+                }
+                now.siblings("span[name='supportSum']").text(supportSum);
+                now.attr("src", 'img/icon-zan.png');
+
+            })
+
+        })
+
+    }
+
+    //评论信息加载
+    function CommentInfo(result) {
+        if (result.isZan == null) {
+            $("#allPL").append("<div class='comment'><div class=\"comment-head\"><img src='" + result.user.headImg + "' /> </div>" +
+                "<div class=\"comment-name\">" +
+                "<div class=\"name-mile\">" +
+                "<span id=\"name\">" +
+                result.user.username +
+                "" +
+                "</span><br />" +
+                "<span id=\"dis\">" +
+                result.content +
+                "" +
+                "</span><br />" +
+                "<span id=\\\"min\">" +
+                result.commentTime +
+                "" +
+                "</span>" +
+                "</div>" +
+                "<div class=\"com-follow\">" +
+                "<div class=\"\">" +
+                "<img src=\"img/icon-wzan.png\" name='pingZan'/> <input type='hidden' name='commentId' value='" + result.commentId + "'>" +
+                "<span name='supportSum'>" +
+                result.supportSum +
+                "" +
+                "</span>" +
+
+                "</div>" +
+                "" +
+                "</div>" +
+                "</div>" +
+                "</div>");
+
+        }
+        else {
+            $("#allPL").append("<div class='comment'><div class=\"comment-head\"><img src='" + result.user.headImg + "' /> </div>" +
+                "<div class=\"comment-name\">" +
+                "<div class=\"name-mile\">" +
+                "<span id=\"name\">" +
+                result.user.username +
+                "" +
+                "</span><br />" +
+                "<span id=\"dis\">" +
+                result.content +
+                "" +
+                "</span><br />" +
+                "<span id=\\\"min\">" +
+                result.commentTime +
+                "" +
+                "</span>" +
+                "</div>" +
+                "<div class=\"com-follow\">" +
+                "<div class=\"\">" +
+                "<img src=\"img/icon-zan.png\" name='pingZan'/> <input type='hidden' name='commentId' value='" + result.commentId + "'>" +
+                "<span name='supportSum'>" +
+                result.supportSum +
+                "" +
+                "</span>" +
+
+                "</div>" +
+                "" +
+                "</div>" +
+                "</div>" +
+                "</div>");
+        }
+    }
+
+
+    $(function () {
+        var result;
+        var user = localStorageToObj("user");
+        var userId = user.userId
+        var flashId;
+        var topicId = window.sessionStorage.getItem("topicId")
+        var topicName = window.sessionStorage.getItem("topicName")
+        var personSum = window.sessionStorage.getItem("personSum");
+        $("#allFlash").find("span[name='topicName']").text("#" + topicName + "#");
+        $(".title").append("#" + topicName + "#")
+        $(".wrap").children("div[name='personSum']").append("" + personSum + "人参与");
+
+
+        var jsonData;
+        myAjax("/flash/listAllFlash", {"topicId": topicId, "userId": userId}, function (data) {
+            var allFlash = new Vue({
+                el: "#allFlash",
+                data: {
+                    userFlashs: data,
+                    userId: userId
+                },
+                methods: {
+                    goSubject(data) {
+                        objToLocalStorage("subjectId", data.subjectId);
+                        window.location.href = path + "/ThematicDetails.html";
+                    }
+                }
+
+            });//end vew
+            $(".img-head").find("img[name='headImg']").on('click', function () {
+                var userId = $(this).siblings("input[name='useId']").val();
+                objToLocalStorage("TAId", userId);
+                window.location = '/index-TA.html'
+
+            })//点击头像跳转
+            zanFlash(userId);
+            $(".main-con").find("img[name='pl']").on('click', function () {
+                nowComment = $(this);
+                nowflash = Number($(this).siblings("span[name='pinglun']").text());
+                $("#PlModal").find("textarea[name='pinglunn']").val("");
+                flashId = $(this).siblings("input[name='flashId']").val();
+                var data;
+                myAjax("/comment/queryInfo", {"userId": userId, "flashId": flashId}, function (cdata) {
+
+                    $.each(cdata, function (key, values) {
+                        data = cdata["listC"];
+                    }) //end each
+                    $("#allPL").empty();
+                    /*   var allPL = new Vue({
+                           el: "#allPL",
+                           data: {
+
+                               commentInfos: data
+                           }
+
+                       })*/
+
+                    $.each(data, function (i, n) {
+                        result = data[i];
+                        CommentInfo(result);
+
+
+                    })
+                    $("#PlModal").modal();
+                    zanComment(userId);
+
+                });
+
+
+            })
+
+            $("#BOSS").find("img[name='comment']").on('click', function () {
+                var content = $(this).siblings("textarea[name='pinglunn']").val();
+
+                if (content == null || content == "") {
+                } else {
+
+                    myAjax("/comment/addInfo", {
+                        "userId": userId,
+                        "flashId": flashId,
+                        "content": content
+                    }, function (data) {
+                        nowflash++;
+                        nowComment.siblings("span[name='pinglun']").text(nowflash);
+                        if (data) {
+                            $("#PlModal").find("textarea[name='pinglunn']").val("");
+                            $("#allPL").empty();
+                            /*   var allPL = new Vue({
+
+                                   el: "#allPL",
+                                   data: {
+
+                                       commentInfos: data
+                                   }
+                               })*/
+                            $.each(data, function (i, n) {
+                                result = data[i];
+                                CommentInfo(result);
+
+                            })
+
+
+                        }
+                        zanComment(userId);
+
+                    })
+
+                }
+
+            })
+
+
+            toFollow(userId);//关注
+        })
+
+
+    })
+</script>
+
+<body>
+<div class="wrap" id="BOSS">
+    <div class="head">
+        <div class="header">
+            <div class="back jump-back">
+                <img src="img/icon_back.png"/>
+                <span id="a">返回</span>
+            </div>
+        </div>
+    </div>
+    <div class="title">
+
+    </div>
+    <div class="ad" name="personSum">
+
+    </div>
+    <div class="main">
+
+        <div class="con-wrap" id="allFlash">
+
+            <div class="main-con" v-for="userFlash in userFlashs">
+                <div class="main-head">
+                    <div class="left">
+                        <div class="img-head">
+                            <img v-bind:src="userFlash.headImg" name="headImg"/>
+                            <input name="useId" type="hidden" v-model="userFlash.userId">
+                        </div>
+                        <div class="head-name">
+                            <div class="name">
+                                <span v-text="userFlash.username"></span>
+                                <span v-if="userFlash.gender=='男'"><img src="img/icon-man.png"/></span>
+                                <span v-else-if="userFlash.gender=='女'"><img src="img/icon-woman.png"/></span>
+
+                            </div>
+                            <div class="time" v-text="userFlash.publishTime">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="follow">
+
+                        <span v-if="userFlash.userId !=userId">
+                          <span v-if=" userFlash.isFolow ==null  ">
+                        <img src="img/button-follow.png" name="follow"/>
+                            <input type="hidden" name="userId" v-model="userFlash.userId">
+                        </span>
+                        <span v-if="userFlash.isFolow !=null && userFlash.isFans !=null">
+                        <img src="img/huxiang.png"/>
+                        </span>
+                            <span v-if="userFlash.isFolow !=null && userFlash.isFans ==null">
+                        <img src="img/isFollow.png"/>
+                        </span>
+                        </span>
+
+                    </div>
+                </div>
+                <div class="main-content">
+                    <div class="content-des">
+                        <span v-text="userFlash.content" style="color: #0C0C0C"></span>
+                        <span name="topicName"></span>
+                    </div>
+                    <div class="content-img">
+                        <div class="img-one">
+                            <img src="img/photo04.png"/>
+                            <img src="img/photo1.png"/>
+                            <img src="img/photo2.png"/>
+                        </div>
+                        <div class="img-one">
+                            <img src="img/photo04.png"/>
+                            <img src="img/photo1.png"/>
+                            <img src="img/photo2.png"/>
+                        </div>
+                        <div class="img-one">
+                            <img src="img/photo04.png"/>
+                            <img src="img/photo1.png"/>
+                            <img src="img/photo2.png"/>
+                        </div>
+                    </div>
+                    <div class="relation" @click="goSubject({subjectId:userFlash.subjectId})">
+                        <div class="img-act"></div>
+                        <div class="title-act">
+                            我参加了
+                            <span id="s" v-text="userFlash.subtitle"></span>
+                            主题<br/>
+                            已累计奔跑了
+                            <span id="d" v-text="userFlash.totalMils"></span>
+                            KM
+                        </div>
+                        <img src="img/icon_back1.png"/>
+                    </div>
+                </div>
+                <div class="main-foot">
+                    <div class="ux">
+                        <div class="left">
+                            <div class="xin" v-if="userFlash.flashCommentLogId !=null">
+                                <img src="img/icon-xinRed.png" name="xin"/>
+                                <input type="hidden" name="flashId" v-model="userFlash.flashId">
+                                <span v-text="userFlash.supportSum" name="supportNum"></span>
+
+                            </div>
+                            <div class="xin" v-else-if="userFlash.flashCommentLogId ==null">
+                                <img src="img/icon-xin.png" name="xin"/>
+                                <input type="hidden" name="flashId" v-model="userFlash.flashId">
+                                <span v-text="userFlash.supportSum" name="supportNum"></span>
+
+                            </div>
+
+
+                            <div class="xin">
+                                <img src="img/pinglun.png" name="pl"/>
+                                <input type="hidden" name="flashId" v-model="userFlash.flashId">
+                                <span v-text="userFlash.commentSum" name="pinglun"></span>
+                            </div>
+
+                        </div>
+                        <div class="right">
+                            <div class="share">
+                                <img src="img/icon-share.png"/>
+                            </div>
+                            <div class="more">
+                                <img src="img/more.png"/>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+
+        <div style="margin-bottom: auto" class="modal fade" id="PlModal"
+             tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"
+                                aria-hidden="true" name="infoDe"></button>
+
+                        <div class="dis" id="allPL">
+                            <!-- <div   v-for="comm in commentInfos">
+                                 <div class='comment'>
+                                     <div class="comment-head">
+                                     <img v-bind:src="comm.user.headImg" />
+                                     </div>
+                                     <div class="comment-name">
+                                         <div class="name-mile">
+                                             <span id="username" v-text="comm.user.username">
+                                             </span><br />
+                                             <span id="content" v-text="comm.content">
+                                              </span><br />
+                                             <span id="time" v-text="comm.commentTime">
+                                             </span>
+                                         </div>
+                                         <div class="com-follow">
+                                             <div class="">
+                                                 <span v-if="comm.isZan==null">
+                                                     <img src="img/icon-wzan.png" name='pingZan'/>
+                                                     <input type='hidden' name='commentId' v-model="comm.commentId">
+                                                     <span name='supportSum' v-text="comm.supportSum">
+                                                     </span>
+                                                 </span>
+                                                 <span v-if="comm.isZan!=null">
+                                                     <img src="img/icon-zan.png" name='pingZan'/>
+                                                     <input type='hidden' name='commentId' v-model="comm.commentId">
+                                                     <span name='supportSum' v-text="comm.supportSum">
+                                                     </span>
+                                                 </span>
+                                             </div>
+ 
+                                         </div>
+                                     </div>
+                                 </div>
+ 
+                             </div>-->
+
+                        </div>
+                        <div align="center">
+                            <textarea cols="12" style="font-size:16px" name="pinglunn"></textarea>
+                            <img src="img/talking.png" name="comment" style="width: 20px; height: 25px"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="js/page-jump.js"></script>
+</html>

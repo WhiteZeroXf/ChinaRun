@@ -1,0 +1,20 @@
+html{font-size: 50px;}
+body{font-size: 0.14rem /*实际相当于14px*/}
+
+*{margin: 0rem;padding: 0rem;}
+body{margin: 0rem;padding: 0rem;width: 100%;font-family: PingFangSC-Semibold;background: #EEEFF3;}
+ul li{list-style-type: none;}
+a{text-decoration: none;}
+
+.head{position: fixed;width: 100%;top: 0;font-size: 0.28rem;letter-spacing: 0;background: #FFFFFF;}
+.header{height: 0.66rem;background-color: white;display: flex;justify-content: space-between;align-items: flex-end;padding-left: 0.5rem;padding-right: 0.5rem;padding-bottom: 0.24rem;}
+.back{font-family: PingFangSC-Semibold;color: #AAADB9;/*line-height: 0.14rem;*/width: 20%;display: flex;align-items: center;}
+.back img{width: auto;height: 0.28rem;padding-right: 0.16rem;}
+
+.main{width: 100%;}
+.title{margin-top: 0.9rem;font-size: 0.44rem;color: #1C202A;line-height: 0.44rem;padding-left: 0.48rem;height: 0.44rem;padding-bottom: 0.42rem;background: #FFFFFF;}
+
+.content{width: 100%;margin-top: 0.1rem;background: #FFFFFF;}
+.about{border-bottom: 0.02rem solid #D8D8D8;font-family: PingFangSC-Medium;font-size: 0.3rem;color: #1C202A;line-height: 0.24rem;height: 0.24rem;display: flex;justify-content: space-between;padding: 0.29rem 0.51rem 0.35rem 0.51rem;}
+.about img{width: auto;height: 0.24rem;}
+

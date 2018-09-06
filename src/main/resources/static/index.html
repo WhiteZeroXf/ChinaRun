@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8"/>
+    <title></title>
+    <meta href="favicon.ico"/>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <script type="text/javascript" src="js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="js/page-jump.js"></script>
+    <script type="text/javascript" src="js/common.js"></script>
+    <script type="text/javascript" src="js/mui.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/index.css"/>
+    <link rel="stylesheet" type="text/css" href="css/mui.min.css"/>
+
+    <script type="text/javascript">
+
+        var num = 0;
+
+        //添加数据
+        function addData(title, topic, finish, peopleSum, imgUrl, id) {
+            //随机选出一种颜色
+            var color = ["#4e4ee7", "#FF0000", "#238E23", "#c169ff", "#2F4F4F"];
+            var color_num = parseInt((Math.random() * 10) % color.length);
+            //debugger
+            var $dd = $("#muban_div").find("[class='item']").clone(true);
+            <!--已完成：finish_span title:shade_title topic:shade_main people:people_span img:item_img-->
+            /*已完成*/
+            $dd.find("#finish_span").text(parseInt(finish * 100) + "%");
+            /*标题*/
+            $dd.find("#shade_title").text(title);
+            /*话题*/
+            $dd.find("[id='shade_min']").text("#" + topic + "#");
+            /*参与人数*/
+            $dd.find("#people_span").text(peopleSum);
+            /*background-image: linear-gradient(-179deg, #1CD577 0%, rgba(28,213,119,0.00) 100%)  item__shade*/
+            $dd.find("[id='item__back']").css("background-image", "linear-gradient(-179deg, " + color[color_num] + " 0%, rgba(28,213,119,0.00) 100%)");
+
+
+            $dd.attr("subjectId",id);
+
+            if (num % 2 == 0) {
+                right($dd);
+            } else {
+                left($dd);
+            }
+            num++;
+        }
+
+        var l = 0;
+        var r = 0;
+        function left(obj) {
+            if (l % 2 == 0) {
+                obj.find("#item_img").attr("style", "background-image:url(img/picture2.png);background-repeat: no-repeat;background-position:center center;  width: 88%;height: 2.4rem;background-size: cover;");
+                $(".column").last().append(obj);
+            } else {
+                obj.find("#item_img").attr("style", "background-image:url(img/picture2.png);background-repeat: no-repeat;background-position:center center;  width: 88%;height: 1.7rem;background-size: cover;");
+                $(".column").last().append(obj);
+            }
+            l++;
+        }
+
+        function right(obj) {
+            if (r % 2 == 0) {
+                obj.find("#item_img").attr("style", "background-image:url(img/picture1.png);background-repeat: no-repeat;background-position:center center;  width: 88%;height: 1.7rem;background-size: cover;");
+                $(".column").first().append(obj);
+            } else {
+                obj.find("#item_img").attr("style", "background-image:url(img/picture1.png);background-repeat: no-repeat;background-position:center center;  width: 88%;height: 2.4rem;background-size: cover;");
+                $(".column").first().append(obj);
+            }
+            r++;
+        }
+
+        var pageNo = 1;
+        var enablePullUp = true;
+        $(function () {
+            //mui('#pullrefresh').disablePullupToRefresh();//禁用上拉加载
+            //mui('#pullrefresh').enablePullupToRefresh();//启用上拉加载
+            mui.init({
+                pullRefresh: {
+                    container: '#pullrefresh',
+                    down: {
+                        style: 'circle',//必选，下拉刷新样式，目前支持原生5+ ‘circle’ 样式
+                        color: '#2BD009', //可选，默认“#2BD009” 下拉刷新控件颜色
+                        callback: billRefresh
+                    },
+                    up: {
+                        height:1000,//可选.默认50.触发上拉加载拖动距离
+                        auto: true,
+                        contentrefresh : "正在加载...",//可选，正在加载状态时，上拉加载控件上显示的标题内容
+                        contentnomore:'没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                        callback: billLoad
+                    }
+                },
+                swipeBack: true, //启用右滑关闭功能
+            });
+
+            /**
+             * 上拉加载具体业务实现
+             */
+            function billLoad() {
+
+                if (!enablePullUp) {
+                    mui('#pullrefresh').pullRefresh().endPullupToRefresh(false);
+                    mui.toast("已经到底啦");
+                    return;
+                }
+                pageNo++;
+                getBill();
+                mui('#pullrefresh').pullRefresh().endPullupToRefresh(false);
+            }
+
+            function billRefresh() {
+
+                pageNo = 1;
+                $(".column").empty();
+                getBill();
+                mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+            }
+
+            function getBill() {
+                myAjax("/subject/querySubject", {"pageNum": pageNo}, function (data) {
+                    var list = data.list;
+                    if (list) {
+                        $.each(list, function (i, elt) {
+                            addData(elt.title, elt.topic_name, elt.mileage_finish / elt.mileage_total, elt.person_sum, "", elt.subject_id);
+                        })
+                    }
+                    if (!data.hasNextPage) {
+                        enablePullUp = false;
+                    } else {
+                        enablePullUp = true;
+                    }
+                });
+            }
+            mui('body').on('tap', '.item', function() {
+                objToLocalStorage("subjectId",this.getAttribute("subjectId"));
+                location.href = path+"/ThematicDetails.html";
+            });
+
+            var scroll = mui('.mui-scroll-wrapper').scroll();
+            document.querySelector('.mui-scroll-wrapper' ).addEventListener('scroll', function (e ) {
+                if(scroll.y > 25){
+                    $(".mui-pull").css("display","block");
+                }
+                if(scroll.y < 0){
+                    $(".mui-pull").css("display","none");
+                }
+            })
+
+        });
+
+
+    </script>
+
+    <style >
+        .bg{
+            background: transparent;
+        }
+        .mui-pull{
+            display: none;
+        }
+    </style>
+
+</head>
+
+<body>
+<div style="">
+    <div class="mui-card-header" style="z-index: 9;position: absolute;top: -30px;">
+        <div class="wrap_index">
+            <div class="header"></div>
+            <div class="blur-bg"></div>
+            <div class="nav-mask"></div>
+            <div class="nav">
+                <ul class="nav_runfast">
+                    <li>推荐</li>
+                    <li class="jump-index-nearby">附近</li>
+                    <li class="jump-my-myrun-Recommend" id="jump-my-myrun-Recommend">我的快跑</li>
+                </ul>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="content"
+         style="position: absolute;height: 89%;top: 0.2rem;background:transparent;">
+
+        <div id="pullrefresh" class="mui-content mui-scroll-wrapper" style="background: transparent;">
+            <div class="mui-scroll" style="background: transparent;">
+                <div class="mui-table-view mui-table-view-chevron" style="background: transparent;">
+
+                    <div class="banner">
+                        <ul class="banner_img">
+                            <a href="#">
+                                <li><img src="img/banner.png"/></li>
+                            </a>
+                        </ul>
+                        <ul class="banner_dot">
+                            <li></li>
+                            <li></li>
+                        </ul>
+                    </div>
+
+                    <div class="content_topic">
+                        <div class="masonry">
+
+                            <!--左半边-->
+                            <div class="column">
+                            </div>
+                            <!--右半边-->
+                            <div class="column">
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!--<div class="content_ad ">
+            <img src="img/banner-ad.png"/>
+        </div>-->
+    </div>
+    <div style="height: 30px"></div>
+
+
+</div>
+
+<div class="footer">
+    <ul class="tab_bar">
+        <li class="find jump-discover"><img src="img/icon-explore.png"/>发现</li>
+        <li class="Run"><img src="img/icon-home.png"/></li>
+        <li class="my jump-my"><img src="img/icon-my%20(2).png"/>我的</li>
+    </ul>
+</div>
+
+<!--已完成：finish_span title:shade_title topic:shade_main people:people_span img:item_img-->
+
+<!--模板-->
+<div id="muban_div" style="display: none;">
+    <div class="item">
+        <div class="shadde_topic" style="width: 44%;">
+            <div class="item__shade" id="item__back"
+                 style="background-image: linear-gradient(-179deg, #0000FF 0%, rgba(28,213,119,0.00) 100%);">
+                <div class="shade_content">
+                    <img src="img/hot.png"/>
+                    <span>
+                        已完成
+                    </span>
+                    <span id="finish_span">
+                        89%
+                    </span>
+                </div>
+                <span class="shade_title" id="shade_title">
+                    跟随李白跑地球
+                    超级马拉松活动
+                </span>
+                <span class="shade_min" id="shade_min">
+                    #挑战自我#
+                </span>
+                <div class="shade_count">
+                    <img src="img/icon-people.png"/>
+                    <span id="people_span">
+                        14286
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="item__content" id="item_img"
+             style="background-image:url(img/picture1.png);background-repeat: no-repeat;background-position:center center;  width: 88%;height: 2.4rem;background-size: cover;"></div>
+    </div>
+
+</div>
+
+</body>
+<script src="js/page-jump.js"></script>
+</html>

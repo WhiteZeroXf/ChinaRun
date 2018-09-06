@@ -1,0 +1,271 @@
+html {
+    font-size: 50px;
+}
+
+body {
+    font-size: 0.5rem;
+}
+
+body {
+    margin: 0rem;
+    padding: 0rem;
+    width: 100%;
+    font-family: PingFangSC-Semibold;;
+}
+
+ul li {
+    list-style-type: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+.head {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    font-size: 0.28rem;
+    letter-spacing: 0;
+}
+
+.header {
+    height: 0.66rem;
+    background-color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-bottom: 0.24rem;
+}
+
+.back {
+    font-family: PingFangSC-Semibold;
+    color: #AAADB9; /*line-height: 0.14rem;*/
+    width: 20%;
+    display: flex;
+    align-items: center;
+}
+
+.back img {
+    width: auto;
+    height: 0.28rem;
+    padding-right: 0.16rem;
+}
+
+.title {
+    margin-top: 0.9rem;
+    font-size: 0.44rem;
+    color: #1C202A;
+    line-height: 0.44rem;
+    margin-left: 0.48rem;
+    height: 0.44rem;
+    margin-bottom: 0.42rem;
+}
+
+.main {
+    width: 100%;
+}
+
+.topic-type {
+    color: #1C202A;
+    width: 87%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.search {
+    border-bottom: 0.02rem solid #D8D8D8;
+    display: flex;
+    margin-top: 0.6rem;
+}
+
+.search img {
+    width: 0.4rem;
+    height: 0.4rem;
+    margin-right: 0.15rem;
+}
+
+#search-p {
+    font-size: 0.24rem;
+    color: #AAADB9;
+    margin-top: 2px;
+    margin-bottom: 0.3rem;
+    display: block;
+}
+
+.type-radio {
+    padding-bottom: 0.5rem;
+    border-bottom: 0.02rem solid #D8D8D8;
+    margin-top: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.type-radio label {
+    font-size: 0.24rem;
+    color: #1C202A;
+}
+
+.position-p {
+    border-bottom: 0.02rem solid #D8D8D8;
+    margin-top: 0.2rem;
+}
+
+.position-title {
+    font-size: 0.3rem;
+    color: #1C202A;
+    font-weight: bolder;
+}
+
+.position-address {
+    font-size: 0.23rem;
+    color: gray;
+    display: block;
+    margin-bottom: 0.47rem;
+}
+
+/*#position {
+    font-size: 0.24rem;
+    color: #1C202A;
+    display: block;
+    margin-bottom: 0.47rem;
+}*/
+
+.name-mile {
+    display: block;
+    margin-top: 0.31rem;
+    border-bottom: 0.02rem solid #D8D8D8;
+}
+
+#position-des {
+    font-size: 0.24rem;
+    color: #1C202A;
+}
+
+#mile {
+    font-family: PingFangSC-Regular;
+    font-size: 0.20rem;
+    color: #AAADB9;
+    margin-top: 0.12rem;
+    margin-bottom: 0.28rem;
+    display: block;
+}
+
+.followed {
+    border: 0.02rem solid #AAADB9;
+    border-radius: 1rem;
+    width: 1.1rem;
+    height: 0.4rem;
+    font-size: 0.24rem;
+    color: #AAADB9;
+    text-align: center;
+    line-height: 0.4rem;
+}
+
+.sk-double-bounce {
+    width: 40px;
+    height: 40px;
+    position: relative;
+    margin: 50% auto;
+}
+
+.sk-double-bounce .sk-child {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: #333;
+    opacity: 0.6;
+    position: absolute;
+    top: 0;
+    left: 0;
+    -webkit-animation: sk-doubleBounce 2s infinite ease-in-out;
+    animation: sk-doubleBounce 2s infinite ease-in-out;
+}
+
+.sk-double-bounce .sk-double-bounce2 {
+    -webkit-animation-delay: -1.0s;
+    animation-delay: -1.0s;
+}
+
+@-webkit-keyframes sk-doubleBounce {
+    0%, 100% {
+        -webkit-transform: scale(0);
+        transform: scale(0);
+    }
+    50% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+}
+
+@keyframes sk-doubleBounce {
+    0%, 100% {
+        -webkit-transform: scale(0);
+        transform: scale(0);
+    }
+    50% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+}
+
+.topic-type:active {
+}
+
+hr {
+    color: #f7f7f7;
+    height: 0.001rem;
+}
+
+.upload_warp_img_div_del {
+    position: absolute;
+    top: 6px;
+    right: -12px;
+}
+
+.upload_warp_img_div img {
+    width: 100%;
+    height: 100%;
+    vertical-align: middle;
+
+}
+
+.upload_warp_img_div {
+    position: relative;
+    height: 100px;
+    width: 100px;
+    border: 0px;
+    margin: 0px 12px 10px 0px;
+    float: left;
+    line-height: 100px;
+    display: table-cell;
+    text-align: center;
+}
+
+#div_topics span {
+    float: left;
+    margin-left: 16px;
+    margin-bottom: 20px;
+    border: 1px solid gray;
+    border-radius: 10px;
+    font-size: 14px;
+    padding: 1px 6px;
+    text-align: center;
+
+}
+
+#div_position_panl {
+    float: left;
+    width: 100%;
+    display: none;
+}
+
+#app {
+    margin-top: 10px;
+}
+.file_image{
+    border-radius: 8px;
+    margin-left: 20px;
+}

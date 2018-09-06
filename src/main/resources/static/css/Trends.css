@@ -1,0 +1,74 @@
+html{font-size: 50px;}
+body{font-size: 0.14rem /*实际相当于14px*/}
+
+*{margin: 0rem;padding: 0rem;}
+body{margin: 0rem;padding: 0rem;width: 100%;font-family: PingFangSC-Semibold;}
+ul li{list-style-type: none;}
+a{text-decoration: none;}
+
+.head{position: fixed;width: 100%;top: 0;font-size: 0.28rem;letter-spacing: 0;}
+.header{height: 0.66rem;background-color: white;display: flex;justify-content: space-between;align-items: flex-end;padding-left: 0.5rem;padding-right: 0.5rem;padding-bottom: 0.24rem;}
+.back{font-family: PingFangSC-Semibold;color: #AAADB9;/*line-height: 0.14rem;*/width: 20%;display: flex;align-items: center;}
+.back img{width: auto;height: 0.28rem;padding-right: 0.16rem;}
+
+.title{margin-top: 1rem;font-family: PingFangSC-Semibold;margin-left: 0.52rem;font-size: 0.44rem !important;color: #1C202A !important;height: 0.44rem;margin-bottom: 0.24rem !important;}
+.ad{font-family: PingFangSC-Semibold;font-size: 0.24rem;color: #585D6B;margin-left: 0.52rem;}
+
+.main{width: 100%;padding-bottom: 1.2rem;}
+.con-wrap{border-bottom: 0.02rem solid #D8D8D8;width: 100%;margin-top: 0.43rem;}
+.main-con{width: 90%;margin-left: auto;margin-right: auto;}
+.main-head,.left{display: flex;align-items: center;justify-content: space-between;}
+.img-head,.img-head img{width: 0.9rem;height: 0.9rem;border-radius: 50%;margin-right: 0.2rem;}
+.head-name{font-family: PingFangSC-Regular;}
+.name{font-size: 0.3rem;color: #1C202A;}
+.name img{width: 0.4rem;height: 0.3rem;padding-left: 0.05rem;}
+
+.time{font-size: 0.24rem;color: #AAADB9;}
+.follow,.follow img{width: 0.9rem;height: 0.4rem;}
+
+.content-des{font-size: 0.24rem;color: #1C202A;margin-bottom: 0.21rem;margin-top: 0.21rem;}
+.content-des span{color: #F52846;}
+
+.content-img{display: flex;justify-content: space-between;margin-bottom: 0.2rem;flex-direction: column;}
+.content-img img{width: 2.10rem;height: 2.1rem;border-radius: 0.1rem;margin-bottom: 0.1rem;}
+
+.relation{background: #F3F4F9;background-size: 100% 100%;width: 100%;height: 1.1rem;display: flex;justify-content: space-between;align-items: center;}
+.img-act{width: 1.1rem;height: 1.1rem;background: url(../img/icon-activite.png) no-repeat center center;background-size: cover;position: absolute;z-index: 1;}
+.relation img{height: 0.27rem;width: auto;margin-right: 0.42rem;}
+.title-act{margin-left: 1.2rem;font-size: 0.24rem;color: #1C202A;}
+.title-act span{margin: 0.07rem;}
+
+.ux{display: flex;justify-content: space-between;align-items: center;margin-top: 0.24rem;margin-bottom: 0.25rem;}
+.left,.right{display: flex;font-family: DINAlternate-Bold;font-size: 0.28rem;color: #AAADB9;align-items: center;}
+.ux img{width: 0.4rem;height: 0.4rem;}
+.xin,.share{margin-right: 0.15rem;}
+
+.title{font-size: 0.24rem;color: #1C202A;margin-bottom: 0.4rem;}
+
+.comment{font-size: 0.24rem;color: #1C202A;width: 100%;padding-bottom: 0.29rem;display: flex;justify-content: space-between;}
+.comment-head{width: 0.6rem;height: 0.6rem;border-radius: 50%;padding-bottom: 0.61rem;padding-right: 0.14rem;}
+.comment-head img{width: 0.6rem;height: 0.6rem;border-radius: 50%;}
+
+.comment-name{display: flex;justify-content: space-between;border-bottom: #D8D8D8 solid 0.02rem;width: 88%;}
+.comment-name img{width: auto;height: 0.4rem;}
+.name-mile{display: block;}
+#name{padding-bottom: 0.14rem;font-family: PingFangSC-Semibold;font-size: 0.2rem;color: #1C202A;}
+#dis{font-size: 0.24rem;color: #1C202A;padding-bottom: 0.14rem;}
+#min{font-family: PingFangSC-Regular;font-size: 0.24rem;color: #AAADB9;}
+
+.com-follw{display: flex;flex-direction: column;align-items: center;width: 0.4rem;}
+.com-folow img{width: 0.4rem;height: 0.4rem;}
+
+.content-img-two{display: flex;justify-content: space-between;width: 4.4rem;flex-direction: column;}
+.img-two img{width: 2.1rem;height: 2.1rem;margin-bottom: 0.1rem;border-radius: 0.1rem;}
+
+.content-img-radio{width: 100%;height: auto;border-radius: 0.1rem;/*background: #AAADB9;*/margin-bottom: 0.2rem;}
+#video-player{width: 100%;height: auto;border-radius: 0.1rem;}
+.start{position: absolute;z-index: 10;width: 90%;text-align: center;margin-top: 16%;}
+.start img{width: 1.2rem;height: 1.2rem;}
+
+.content-btn{margin-bottom: 0.25rem;}
+.content-btn a{font-size: 0.24rem;color: #287CF0 !important;}
+
+.content-img-three{width: 100%;height: 6.5rem;margin-bottom: 0.2rem;}
+.img-three img{width: 100%;height: 6.5rem;border-radius: 0.1rem;}

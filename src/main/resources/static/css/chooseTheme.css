@@ -1,0 +1,17 @@
+html{font-size: 50px;}
+body{font-size: 0.14rem /*实际相当于14px*/}
+
+*{margin: 0rem;padding: 0rem;}
+body{margin: 0rem;padding: 0rem;width: 100%;font-family: PingFangSC-Semibold;;}
+ul li{list-style-type: none;}
+a{text-decoration: none;}
+
+.head{position: fixed;width: 100%;top: 0;font-size: 0.28rem;letter-spacing: 0;}
+.header{height: 0.66rem;background-color: white;display: flex;justify-content: space-between;align-items: flex-end;padding-left: 0.5rem;padding-right: 0.5rem;padding-bottom: 0.24rem;}
+.back{font-family: PingFangSC-Semibold;color: #AAADB9;/*line-height: 0.14rem;*/width: 20%;display: flex;align-items: center;}
+.back img{width: auto;height: 0.28rem;padding-right: 0.16rem;}
+
+
+.main{width: 100%;}
+.title{margin-top: 0.9rem;font-size: 0.44rem;color: #1C202A;line-height: 0.44rem;margin-left: 0.48rem;height: 0.44rem;margin-bottom: 0.42rem;}
+.topic-type{font-size: 0.24rem;color: #1C202A;letter-spacing: 0;line-height: 0.2rem;height: 0.2rem;width: 87%;margin:  0.3rem auto 0 auto;padding-bottom: 0.32rem;border-bottom: #D8D8D8 solid 0.02rem;}

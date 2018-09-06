@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="css/hot.css"/>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <script src="js/jquery-1.11.0.min.js"></script>
+    <script src="js/popper.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/vue.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/element.js"></script>
+    <style>
+        .load {
+            font-size: 0.3rem;
+            text-align: center;
+            color: #b9b9b9;
+        }
+    </style>
+</head>
+<script>
+    function toThreds() {
+        $(".content-hot").on('click', function () {
+            var topicId = $(this).find("#topicId").text();
+            var topicName = $(this).find("span[name='topicName']").text();
+            var personSum = $(this).find("span[name='personSum']").text();
+            window.sessionStorage.setItem("topicId", topicId);
+            window.sessionStorage.setItem("topicName", topicName);
+            window.sessionStorage.setItem("personSum", personSum);
+            location = "Trends.html"
+
+        })
+    }//跳转话题动态Threds.html
+    $(function () {
+        var jsonData;
+        myAjax('/topic/queryAllByHotPage', {}, function (data) {
+            $("#loadInfo").find("#pageNum").val(data.pageNum);
+            var allTopic = new Vue({
+                el: '#allTopic',
+                data: {
+                    topics: data.list
+                }
+
+            })
+            toThreds();
+            $(".load").on('click', function () {
+
+                var pageNum = Number($(this).children("input[name='pageNum']").val()) + 1;
+
+                myAjax('/topic/queryAllByHotPage', {"pageNum": pageNum}, function (data) {
+
+                        $.each(data.list, function (i, n) {
+
+                            $("#loadInfo #Info").append("<div class='content-hot'>\n" +
+                                "<div class='hot-up'>\n" +
+                                "<div class='topic'>\n" +
+                                " <span id='topicName' name='topicName'>\n" +
+                                "\n" + data.list[i].topicName +
+                                "</span>\n" +
+                                "<div style='display: none' id='topicId'>\n" + data.list[i].topicId +
+                                "</div></div><div class='add'><span id='count' name='personSum'>" + data.list[i].personSum + "人参与</span>\n" +
+                                "<img src='img/icon_back1.png'/>\n" +
+                                "</div>\n" +
+                                "</div>\n" +
+                                "<div class='hot-img'>\n" +
+                                "<div class='img-tj'>\n" +
+                                "<div class='jc-img'> </div>\n" +
+                                "</div>\n" +
+                                "<div class='img-tj'>\n" +
+                                "<div class='jc-img'>\n" +
+                                "</div>\n" +
+                                "</div>\n" +
+                                "<div class='img-tj'>\n" +
+                                "<div class='jc-img'>\n" +
+                                "</div>\n" +
+                                "</div>\n" +
+                                "</div>\n");
+                        });
+                        $("#loadInfo").find("#pageNum").val(data.pageNum);
+                        toThreds();
+                        if (data.isLastPage) {
+                            $("#loadInfo .load").text("---已经到底了---")
+                            $("#loadInfo .load").unbind();
+                        }
+
+                    }
+                )
+                /*       $.ajax({
+                           type: "POST",
+                           url: path + '/topic/queryAllByHotPage',
+                           async: false,
+                           data: {"pageNum":pageNum},
+                           success: function (result) {
+                               var data  = result.data;
+
+                               $.each(data.list,function (i,n) {
+
+                               $("#loadInfo #Info").append("<div class='content-hot'>\n" +
+                                   "<div class='hot-up'>\n" +
+                                   "<div class='topic'>\n" +
+                                   " <span id='topicName' name='topicName'>\n" +
+                                   "\n" +data.list[i].topicName+
+                                   "</span>\n" +
+                                   "<div style='display: none' id='topicId'>\n" + data.list[i].topicId+
+                                   "</div></div><div class='add'><span id='count' name='personSum'>"+data.list[i].personSum+"人参与</span>\n" +
+                                   "<img src='img/icon_back1.png'/>\n" +
+                                   "</div>\n" +
+                                   "</div>\n" +
+                                   "<div class='hot-img'>\n" +
+                                   "<div class='img-tj'>\n" +
+                                   "<div class='jc-img'> </div>\n" +
+                                   "</div>\n" +
+                                   "<div class='img-tj'>\n" +
+                                   "<div class='jc-img'>\n" +
+                                   "</div>\n" +
+                                   "</div>\n" +
+                                   "<div class='img-tj'>\n" +
+                                   "<div class='jc-img'>\n" +
+                                   "</div>\n" +
+                                   "</div>\n" +
+                                   "</div>\n");
+                               });
+                               $("#loadInfo").find("#pageNum").val(data.pageNum);
+                               if(data.isLastPage){
+                                   $("#loadInfo .load").text("---已经到底了---")
+                                   toThreds();
+
+                               }
+
+                           }
+
+
+
+
+                       });//ajax end*/
+
+            })
+        })
+        $
+        /*.ajax({
+                    type: "POST",
+                    url: path + '/topic/queryAllByHotPage',
+                    async: false,
+                    data: {},
+                    success: function (result) {
+                      var data  = result.data;
+                      $("#loadInfo").find("#pageNum").val(data.pageNum);
+                          var allTopic = new Vue({
+                              el: '#allTopic',
+                              data: {
+                                  topics: data.list
+                              }
+
+                          })
+                      }
+
+
+
+
+                });//ajax end*/
+
+
+    })
+
+</script>
+
+<body>
+<div class="wrap-hot">
+    <div class="nav-wrap-hot">
+        <div class="blur-bg"></div>
+        <div class="nav-mask"></div>
+        <div class="nav-hot nav-con">
+            <ul class="nav_runfast-hot">
+                <li class="jump-discover">李白跑地球</li>
+                <li>热门</li>
+            </ul>
+            <ul class="nav_came-hot">
+                <li><img src="img/icon-camera copy.png"/></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="container" id="allTopic">
+        <template>
+            <div class="main-hot">
+                <div class="content-hot" v-for="topic in topics">
+                    <div class="hot-up">
+                        <div class="topic">
+							<span id="topicName" name="topicName">
+								{{topic.topicName}}
+							</span>
+                            <div style="display: none" id="topicId">
+                                {{topic.topicId}}
+                            </div>
+                        </div>
+                        <div class="add">
+                            <span id="count" name="personSum">{{topic.personSum}} </span>人参与
+                            <img src="img/icon_back1.png"/>
+                        </div>
+                    </div>
+                    <div class="hot-img">
+                        <div class="img-tj">
+                            <div class="jc-img">
+                            </div>
+                        </div>
+                        <div class="img-tj">
+                            <div class="jc-img">
+                            </div>
+                        </div>
+                        <div class="img-tj">
+                            <div class="jc-img">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <div id="loadInfo">
+            <div id="Info">
+
+            </div>
+            <div class="load">点我加载
+                <input type="hidden" id="pageNum" name="pageNum" value="">
+            </div>
+            <div style="margin-bottom: 16%;"></div>
+
+        </div>
+
+    </div>
+
+    <div class="footer">
+        <ul class="tab_bar">
+            <li class="find"><img src="img/icon-explore-xz.png"/>发现</li>
+            <li class="Run jump-index"><img src="img/icon-run.png"/>快跑</li>
+            <li class="my jump-my"><img src="img/icon-my%20(2).png"/>我的</li>
+        </ul>
+    </div>
+</div>
+</body>
+
+<script src="js/page-jump.js"></script>
+
+</html>

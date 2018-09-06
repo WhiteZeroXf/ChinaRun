@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="css/Notification.css"/>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <script src="js/jquery-1.11.0.min.js"></script>
+    <script src="js/element.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/reveal-it.js"></script>
+    <script src="js/common.js"></script>
+    <style>
+        .small {
+            width: 200px;
+            height: 200px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: auto;
+            font-family: PingFangSC-Semibold;
+            color: #AAADB9;
+        }
+        .load{
+            font-size: 0.3rem;
+            text-align: center;
+            color: #b9b9b9;
+        }
+        .active {
+        border-bottom:0.04rem solid #585D6B
+        }
+    </style>
+    <script>
+        var i=0;
+        var k=0;
+        var u=0;
+        //动态加载系统消息内容
+        function dataInject(data) {
+            var str;
+            if(data==-1){
+                str ="<div class = \"small\"><img src=\"img/Page 1.png\"/><br/><center>暂无消息~~</center></div>"
+            }else {
+                var createTime = data.createTime;
+                var content = data.content.substring(0, 5) + "...";
+                str = "<div class=\"about\">" +
+                    "<div class=\"id\" style=\"display: none;\">" + data.mstSystemId + "</div>" +
+                    "                <div class=\"systemContent\">\n" +
+                    "                    <div class=\"time\">\n" + createTime +
+                    "                    </div>\n" +
+                    "                    <span>\n" + content +
+                    "                    </span>\n" +
+                    "                </div>\n" +
+                    "                <img src=\"img/icon_back1.png\"/>\n" +
+                    "\n" +
+                    "</div>\n"
+            }
+            $("#sysdiv").append(str);
+        }
+        //动态加载关注内容
+        function fansDataInject(data){
+            var str;
+            if(data==-1){
+                str ="<div class = \"small\"><img src=\"img/Page 1.png\"/><br/><center>暂无消息~~</center></div>"
+            }else {
+                var str = " <div class=\"about\">\n" +
+                    "<div class=\"sysUserId\" style=\"display: none;\">" + data.msgUserId + "</div>" +
+                    "<div class=\"id\" style=\"display: none;\">" + data.userFansId + "</div>" +
+                    "                <div class=\"fansContent\">\n" +
+                    "                    <div class=\"time\">\n" + data.createTime +
+                    "                    </div>\n" +
+                    "                    <span id=\"\">\n" + data.username + "关注了你！" +
+                    "                        \n" +
+                    "                    </span>\n" +
+                    "                </div>\n" +
+                    "                <img src=\"img/icon_back1.png\"/>\n" +
+                    "            </div>"
+            }
+            $("#fans-focus").append(str);
+        }
+        //动态加载赞和评论内容
+        function zanDataInject(data) {
+            var str;
+            if(data==-1){
+                str ="<div class = \"small\"><img src=\"img/Page 1.png\"/><br/><center>暂无消息~~</center></div>"
+            }else {
+                if (data.foucusType == 1) {
+                    str = " <div class=\"about\">\n" +
+                        "<div class=\"id\" style=\"display: none;\">" + "what" + "</div>" +
+                        "                <div class=\"zansContent\">\n" +
+                        "                    <div class=\"time\">\n" + data.createTime +
+                        "                    </div>\n" +
+                        "                    <span>\n" + data.username + "评论了你的日志！" +
+                        "                        \n" +
+                        "                    </span>\n" +
+                        "                </div>\n" +
+                        "                <img src=\"img/icon_back1.png\"/>\n" +
+                        "            </div>"
+                } else if (data.foucusType == 2) {
+                    str = " <div class=\"about\">\n" +
+                        "<div class=\"id\" style=\"display: none;\">" + "what" + "</div>" +
+                        "                <div class=\"zansContent\">\n" +
+                        "                    <div class=\"time\">\n" + data.createTime +
+                        "                    </div>\n" +
+                        "                    <span id=\"\">\n" + data.username + "赞了你的日志！" +
+                        "                        \n" +
+                        "                    </span>\n" +
+                        "                </div>\n" +
+                        "                <img src=\"img/icon_back1.png\"/>\n" +
+                        "            </div>"
+                } else {
+                    str = " <div class=\"about\">\n" +
+                        "<div class=\"id\" style=\"display: none;\">" + "what" + "</div>" +
+                        "                <div class=\"zansContent\">\n" +
+                        "                    <div class=\"time\">\n" + data.createTime +
+                        "                    </div>\n" +
+                        "                    <span id=\"\">\n" + data.username + "赞了你的评论！" +
+                        "                        \n" +
+                        "                    </span>\n" +
+                        "                </div>\n" +
+                        "                <img src=\"img/icon_back1.png\"/>\n" +
+                        "            </div>"
+                }
+            }
+            $("#zan-pl").append(str);
+        }
+        //向后台请求系统消息
+        //{localStorageToObj("user")}
+        function sys() {
+            var user = localStorageToObj("user");
+            var userId = user.userId;
+            myAjax("/msgSystem/findUnread", {"userId":userId}, function (data) {
+                if(data.length) {
+                    if(data.length<=5){
+                        $("#sysload").css("display","none");
+                    }else {
+                        $("#sysload").css("display", "block");
+                    }
+                        $(".sys").find("div[class='count-yq']").text(data.length);
+                        forMoreMsgs(data);
+                        $("#sysload").on("click", function () {
+                            forMoreMsgs(data);
+                        });
+                }else{
+                    $(".sys").find("div[class='count-yq']").css("display","none");
+                    dataInject(-1);
+                }
+
+            });
+        }
+        //向后台请求粉丝关注消息
+        function fans(index){
+            var user = localStorageToObj("user");
+            var userId = user.userId;
+            myAjax("/msgUser/findAllFocus", {"userId":userId}, function (data) {
+                if(index==1){
+                    if(data.length){
+                        $(".fans").find("div[class='count-yq']").text(data.length);
+                    }else{
+                        $(".fans").find("div[class='count-yq']").css("display", "none");
+                    }
+                    $(".zan").find("div[class='count-yq']").text(data.length);
+                }else {
+                    if (data.length) {
+                        if (data.length <= 5) {
+                            $("#fansload").css("display", "none");
+                        } else {
+                            $("#fansload").css("display", "block");
+                        }
+                       // $(".fans").find("div[class='count-yq']").text(data.length);
+                        forMoreAttentionMsg(data);
+                        $("#fansload").on("click", function () {
+                            forMoreAttentionMsg(data);
+                        })
+                    } else {
+                        $(".fans").find("div[class='count-yq']").css("display", "none");
+                        $("#fansload").css("display", "none");
+                        fansDataInject(-1);
+                    }
+                }
+                });
+
+        }
+        //向后台请求赞和评论消息
+        function zans(index) {
+            var user = localStorageToObj("user");
+            var userId = user.userId;
+
+            myAjax("/msgUser/findAllZans", {"userId":userId}, function (data) {
+                if(index==1){
+                    if(data.length){
+                        $(".zan").find("div[class='count-yq']").text(data.length);
+                    }else{
+                        $(".zan").find("div[class='count-yq']").css("display", "none");
+                    }
+                    $(".zan").find("div[class='count-yq']").text(data.length);
+                }else{
+                    if(data.length) {
+                        if(data.length<=5){
+                            $("#zanload").css("display","none");
+                        }else {
+                            $("#zanload").css("display", "block");
+                        }
+                        $(".zan").find("div[class='count-yq']").text(data.length);
+
+                        forMoreZanMsg(data);
+                        $("#zanload").on("click",function(){
+                            forMoreZanMsg(data);
+                        })
+                 }else{
+                    $(".zan").find("div[class='count-yq']").css("display","none");
+                    $("#zanload").css("display", "none");
+                        zanDataInject(-1);
+                    }
+                }
+                });
+        }
+        //分批加载获得更多系统消息
+        function forMoreMsgs(data){
+            var s = i;
+            var j;
+            if(data.length-i<5)
+            {
+                j = data.length;
+            }else{
+
+                j = i + 5;
+            }
+            for (i; i < j; i++) {
+                dataInject(data[i]);
+            }
+            i = s + 5;
+            if(data.length<=i){
+                $("#sysload").css("display","none");
+                $("#sysloadNoMore").css("display","block");
+
+            }
+        }
+        //分批加载获得更多关注信息
+        function forMoreAttentionMsg(data) {
+            var s = k;
+            var f;
+            if(data.length-k<5)
+            {
+                f = data.length;
+            }else{
+
+                f = k + 5;
+            }
+            for(k;k<f;k++)
+            {
+                fansDataInject(data[k]);
+            }
+            k = s + 5;
+            if(data.length<=k){
+                $("#fansload").css("display","none");
+                $("#fansloadNoMore").css("display","block");
+
+            }
+        }
+        //分批加载获得更多赞和评论消息
+        function forMoreZanMsg(data){
+            var s=u;
+            var j;
+            if(data.length-u<5)
+            {
+                j = data.length;
+            }else{
+                j = u+5;
+            }
+            for (u; u < j; u++) {
+                zanDataInject(data[u]);
+            }
+            u=s+5;
+            if(data.length<=i){
+                $("#zanload").css("display","none");
+                $("#zanloadNoMore").css("display","block");
+
+            }
+        }
+        $(document).ready(function ()   {
+            $("#sysload").css("display","none");
+            $("#fansload").css("display","none");
+            $("#zanload").css("display","none");
+            $("#sysloadNoMore").css("display","none");
+            $("#fansloadNoMore").css("display","none");
+            $("#zanloadNoMore").css("display","none");
+            sys();
+            $(".sys").find("p").addClass("active");
+            $(".fans").find("p").removeClass("active");
+            $(".zan").find("p").removeClass("active");
+            fans(1);
+            zans(1);
+            //系统消息列表
+            $(".sys").on("click", function () {
+               location.reload();
+                 $("#sysload").css("display","block");
+                $("#fansload").css("display","none");
+                $("#zanload").css("display","none");
+                $(".sys").find("p").addClass("active");
+                $(".fans").find("p").removeClass("active");
+                $(".zan").find("p").removeClass("active");
+            })
+            //粉丝列表
+            $(".fans").on("click",function () {
+                $(".system").css("display","none");
+                $(".fans-focus").css("display","block");
+                $(".zan-pl").css("display","none");
+
+                $("#sysload").css("display","none");
+                $("#fansload").css("display","block");
+                $("#zanload").css("display","none");
+
+                $("#sysloadNoMore").css("display","none");
+                $("#fansloadNoMore").css("display","none");
+                $("#zanloadNoMore").css("display","none");
+
+                $(".sys").find("p").removeClass("active");
+                $(".fans").find("p").addClass("active");
+                $(".zan").find("p").removeClass("active");
+                fans();
+            })
+            //赞和评论列表
+            $(".zan").on("click",function (){
+                $(".system").css("display","none");
+                $(".fans-focus").css("display","none");
+                $(".zan-pl").css("display","block");
+
+                $("#sysload").css("display","none");
+                $("#fansload").css("display","none");
+                $("#zanload").css("display","block");
+
+                $("#sysloadNoMore").css("display","none");
+                $("#fansloadNoMore").css("display","none");
+                $("#zanloadNoMore").css("display","none");
+
+                $(".sys").find("p").removeClass("active");
+                $(".fans").find("p").removeClass("active");
+                $(".zan").find("p").addClass("active");
+                zans();
+            })
+            //跳转详细系统消息
+            $("#sysdiv").on("click","div[class='about']",function(){
+                var id = $(this).find("div[class='id']").text();
+                objToLocalStorage("msgSystemId",id);
+                window.location="/MessageDetails.html";
+            })
+            //跳转到日志详情的方法
+                $("#zan-pl").on("click","div[class='about']",function () {
+                    //var fanid = $(this).find("div[class='id']").text();
+                    alert("跳转日志详情");
+                    /*window.sessionStorage.setItem("userid",id);
+                    //跳转到个人主页
+                    window.location="/MessageDetails.html";*/
+                })
+            //跳转到关注人主页的方法
+                $("#fans-focus").on("click","div[class='about']",function () {
+                    var sysUserId = $(this).find("div[class='sysUserId']").text();
+                    var fanId = $(this).find("div[class='id']").text();
+                    objToLocalStorage("sysUserId",sysUserId);
+                    objToLocalStorage("fanId",fanId);
+                    //跳转到个人主页
+                    window.location="/index-TA1.html";
+                })
+                $("#back").on("click",function () {
+                    location = "index-my.html";
+                })
+        })
+    </script>
+</head>
+<body>
+<div class="wrap">
+            <div class="head">
+                <div class="header">
+                    <div class="back" id="back">
+                        <img src="img/icon_back.png" />
+                        <span id="">返回</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="main">
+        <div class="title">
+            消息中心
+        </div>
+
+        <div class="tab-bar">
+            <div class="sys"><p>系统消息 </p>
+                <div class="count-yq"></div>
+            </div>
+            <div class="fans"><p>粉丝关注 </p>
+                <div class="count-yq" ></div>
+            </div>
+            <div class="zan"><p>赞与评论 </p>
+                <div class="count-yq" ></div>
+            </div>
+        </div>
+        <div class="bg">
+        </div>
+            <div class="system" id="sysdiv">
+            </div>
+        <div class="load" id="sysload">点我加载</div>
+        <div class="load" id="sysloadNoMore">没有更多了</div>
+        <div class="fans-focus" id="fans-focus" style="display: none;">
+
+        </div>
+        <div class="load" id="fansload">点我加载</div>
+         <div class="load" id="fansloadNoMore">没有更多了</div>
+
+        <div class="zan-pl" id="zan-pl" style="display: none;">
+
+        </div>
+        <div class="load" id="zanload">点我加载</div>
+        <div class="load" id="zanloadNoMore">没有更多了</div>
+
+    </div>
+</div>
+
+</body>
+
+</html>

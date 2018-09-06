@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero.cr.dao.MsgUserMapper">
+  <resultMap id="BaseResultMap" type="com.zero.cr.pojo.MsgUser">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="msg_user_id" jdbcType="BIGINT" property="msgUserId" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="type_id" jdbcType="BIGINT" property="typeId" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+    <result column="fans_id" jdbcType="BIGINT" property="fansId"></result>
+    <result column="flash_comment_log_id"  jdbcType="BIGINT"  property="flashCommentLogId"></result>
+  </resultMap>
+
+  <resultMap id="userMap" type="com.zero.cr.vo.FansUserBean">
+    <id column="msg_user_id" jdbcType="BIGINT" property="msgUserId" />
+    <id column="fans_id" jdbcType="BIGINT" property="fansId" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="type_id" jdbcType="BIGINT" property="typeId" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="user_fans_id" jdbcType="BIGINT" property="userFansId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+  </resultMap>
+
+  <resultMap id="zansMap" type="com.zero.cr.vo.FocusUserBean">
+    <id column="msg_user_id" jdbcType="BIGINT" property="msgUserId" />
+    <id column="givezan_userid" jdbcType="BIGINT" property="giveZanUserId" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="user_type" jdbcType="INTEGER" property="userType" />
+    <result column="type_id" jdbcType="BIGINT" property="typeId" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+
+    <result column="foucus_type" jdbcType="INTEGER" property="foucusType" />
+    <result column="username" jdbcType="VARCHAR" property="username"/>
+  </resultMap>
+    <!--查询未读的关注信息-->
+  <select id="selectUnreadFocus" resultMap="userMap">
+      select msg_user.msg_user_id,
+msg_user.user_id,
+msg_user.content,
+msg_user.type,
+msg_user.type_id,
+msg_user.state,
+fans.create_time,fans.user_fans_id,user.username from msg_user inner join fans on msg_user.fans_id = fans.fans_id inner join user on user_fans_id = user.user_id
+      where msg_user.user_id= #{userid} and msg_user.type = 1 and msg_user.state = 0
+  </select>
+
+    <!--查询未读的赞和评论信息-->
+  <select id="selectUnreadZans" resultMap="zansMap">
+      select
+msg_user.msg_user_id,
+msg_user.user_id,
+msg_user.content,
+msg_user.type AS user_type,
+msg_user.type_id,
+msg_user.state,
+flash_comment_log.create_time,
+flash_comment_log.type AS foucus_type,
+flash_comment_log.user_id as givezan_userid,
+user.username from msg_user inner join flash_comment_log on msg_user.flash_comment_log_id = flash_comment_log.flash_comment_log_id inner join user on flash_comment_log.user_id = user.user_id
+      where msg_user.user_id=#{userid} and msg_user.type = 2 and msg_user.state = 0
+  </select>
+</mapper>

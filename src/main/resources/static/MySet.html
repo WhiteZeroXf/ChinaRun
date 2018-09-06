@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="css/MySet.css"/>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <script src="js/jquery-1.11.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#rule").on("click", function () {
+                window.location = "Agreement.html";
+            });
+            $("#aboutUs").on("click", function () {
+                window.location = "AboutUs.html";
+            });
+        })
+    </script>
+
+</head>
+<body>
+<div class="wrap">
+    <div class="head">
+        <div class="header">
+            <div class="back jump-my">
+                <img src="img/icon_back.png"/>
+                <span id="">返回</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="title">
+            设置
+        </div>
+
+        <div class="content">
+            <div id="aboutUs" class="about">
+						<span id="">
+							关于快跑中国
+						</span>
+                <img src="img/icon_back1.png"/>
+            </div>
+            <div id="rule" class="about">
+						<span id="">
+							社区自律公约
+						</span>
+                <img src="img/icon_back1.png"/>
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+<script src="js/page-jump.js"></script>
+</html>

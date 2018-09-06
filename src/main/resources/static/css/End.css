@@ -1,0 +1,55 @@
+html{font-size: 50px;}
+body{font-size: 0.14rem /*实际相当于14px*/}
+
+*{margin: 0rem;padding: 0rem;}
+body{margin: 0rem;padding: 0rem;width: 100%;font-family: PingFangSC-Semibold;}
+ul li{list-style-type: none;}
+a{text-decoration: none;}
+
+
+.wrap-zz{background: rgba(9,11,41,0.65);width: 100%;height: 100%;position: absolute;z-index: 100;}
+.wrap{width: 100%;height: auto;}
+.content{width: 100%;height: 50%;background: url(../img/blue.png) no-repeat center;background-size: cover;bottom: 0rem;position: absolute;}
+.title{color: #FFFFFF;font-family: PingFangSC-Medium;font-size: 0.64rem;width: 87%;margin-left: auto;margin-right: auto;margin-bottom: 0.45rem;padding-top: 0.88rem;}
+
+.head{position: absolute;z-index: 110;width: 98%;text-align: end;margin-top: -7%;}
+.head img{width: 1.1rem;height: 1.1rem;border-radius: 50%;border: 0.02rem solid #FFFFFF;}
+
+.describe{width: 87%;height: 4.2rem;background: #FFFFFF;box-shadow: 0 10px 15px 0 rgba(40,124,240,0.12);border-radius: 0.20rem;margin-left: auto;margin-right: auto;}
+.title-des{font-size: 0.36rem;color: #1C202A;width: 90%;margin: 0 auto 0.24rem auto;padding-top: 0.27rem;}
+.topic-des{font-size: 0.24rem;color: #1C202A;margin: auto auto auto auto;width: 90%}
+
+.down-des{background: #F3F4F9;width: 100%;height: 2.31rem;margin-top: 0.46rem;position: relative;border-bottom-left-radius: 0.2rem;border-bottom-right-radius: 0.2rem;}
+.des-down{font-family: PingFangSC-Regular;font-size: 0.24rem;color: #1C202A;margin-left: 0.3rem;padding-top: 0.29rem;}
+.des-down img{width: 0.28rem;height: 0.25rem;}
+.milage-down{font-family: DINCond-Black;font-size: 1.2rem;color: #1C202A;margin-left: 0.3rem;padding-top: 0.37rem;}
+.milage-down span{font-size: 0.44rem;color: #000E00;}
+
+.bottom{display: flex;align-items: flex-end;justify-content: space-between;}
+.right{background: #FFFFFF;width: 1.05rem;height: 1.05rem;margin-right: 0.28rem;margin-bottom: 0.28rem;}
+
+.btn{display: flex;justify-content: space-between;width: 87%;margin-left: auto;margin-right: auto;margin-top: 0.35rem;}
+.rig{width: 20% !important;display: flex;justify-content: space-between;}
+.btn img{width: 0.5rem;height: 0.5rem;}
+
+.share-zz{position: absolute;z-index: 102;width: 100%;height: 100%;background: rgba(0,0,0,0.50);}
+.head-share{font-size: 0.24rem;color: #1C202A;display: flex;width: 90%;margin-left: auto;margin-right: auto;margin-top: 0.49rem;align-items: flex-end;justify-content: space-between;}
+.right-back{display: flex;align-items: flex-end;}
+.right-back img{height: 0.27rem;width: auto;line-height: 0.27rem;}
+.head-share span{margin-left: 0.18rem;}
+.share-btn{width: 100%;height: 4.67rem;background: #FFFFFF;bottom: 0rem;position: absolute;}
+.share-content{display: flex;flex-flow: row wrap;position: relative;width: 90%;margin-left: auto;margin-right: auto;margin-top: 0.49rem;font-size: 0.24rem;color: #AAADB9;text-align: center;}
+.share-content img{width: 1.22rem;height: 1.22rem;margin-bottom: 0.1rem;}
+.rz,.wechat,.friend,.wb{margin-right: 0.57rem;margin-bottom: 0.3rem;}
+.qq{margin-bottom: 0.3rem;}
+
+.lightup{background: rgba(0,0,0,0.50);width: 100%;height: 100%;position: absolute;z-index: 101;display: flex;justify-content: center;padding-top: 35%;}
+.zs-bg{background: #FFFFFF;width: 87%;height: 7.5rem;box-shadow: 0 0.10rem 0.15rem 0 rgba(40,124,240,0.12);border-radius: 0.2rem;text-align: center;}
+.icon img{width: 1.6rem;height: 1.6rem;margin-top: 0.99rem;}
+.con{font-size: 0.30rem;color: #1C202A;margin-top: 0.71rem;width: 74%;margin-left: auto;margin-right: auto;}
+.con{text-align: end;}
+.btn-sr{width: 55%;height: 1.1rem;background: #F52846;border-radius: 1rem;margin-left: auto;margin-right: auto;color: white;font-size: 0.36rem;color: #FFFFFF;text-align: center;line-height: 1.1rem;margin-top: 0.48rem;}
+
+
+
+

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="css/My.css"/>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <script src="js/jquery-1.11.0.min.js"></script>
+    <script src="js/popper.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/element.js"></script>
+    <script src="js/vue.js"></script>
+</head>
+
+<body>
+
+
+<div class="wrap" id="wrap">
+    <template>
+        <div>
+            <div class="top">
+                <div class="bg-one">
+                    <div class="Head-portrait">
+                        <img :src="user.headImg" class="jump-my-personal" id="img-head"/>
+                    </div>
+                    <div v-bind="user">
+                        <div class="back jump-back">
+                            <img src="img/icon_back.png"/>
+                            <span id="">返回</span>
+                        </div>
+                        <div class="top-content">
+
+                            <div class="name jump-my-personal">
+							<span id="username" name="username" v-text="user.username">
+							</span>
+                                <span v-if="user.gender=='男'"><img src="img/icon-man.png"/></span>
+                                <span v-else-if="user.gender=='女'"><img src="img/icon-woman.png"/></span>
+
+                            </div>
+                            <div class="autograph  jump-my-personal">
+                                <ul v-text="user.sign"></ul>
+                            </div>
+                            <div class="fans-follow">
+                                <div class="fans" @click="ToTaFans({user1Id:userId})">
+                                    粉丝<br/>
+                                    <span id="fans" v-text="user.fansSum">
+								</span>
+                                </div>
+                                <div class="follow" @click="ToTaFollow({user1Id:userId})">
+                                    关注<br/>
+                                    <span id="follow" v-text="user.followSum">
+								</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="main">
+                <div class="main-milage">
+                    个人贡献里程／km<br/>
+                    <span id="main-milage" v-text="user.contributeMils">
+					</span>
+                </div>
+                <div class="contr">
+                    <div class="time">
+                        贡献小时／h<br/>
+                        <span id="time" v-text="user.contributeHours">
+						</span>
+                    </div>
+                    <div class="number">
+                        贡献次数／次<br/>
+                        <span id="a_number" v-text="user.contributeSum">
+                </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="MyAct">
+            <div class="run" @click="TaRun({TaRunId:userId})">
+                <img src="img/icon-myrun.png"/><br/>
+                TA的快跑
+            </div>
+            <div class="start" @click="TaStart({TaStartId:userId})">
+                <img src="img/icon-mystart.png"/><br/>
+                TA的发起
+            </div>
+            <div class="journal">
+                <img src="img/icon-myjournal.png"/><br/>
+                快跑日志
+            </div>
+        </div>
+    </template>
+</div>
+</body>
+<script>
+    $(function () {
+        var userId = localStorageToObj("MyToTaId");
+        myAjax("/user/getById", {"userId": userId}, function (result) {
+            var wrap = new Vue({
+                el: '#wrap',
+                data: {
+                    user: result,
+                    userId: userId
+                },
+                methods: {
+                    ToTaFans(data) {
+                        objToLocalStorage("TaToTaFanId", data.user1Id);
+                        window.location.href = path + "/my-TA-fans.html";
+                    },
+                    ToTaFollow(data) {
+                        objToLocalStorage("TaToTaFollowId", data.user1Id);
+                        window.location.href = path + "/my-TA-follow.html";
+                    },
+                    TaRun(data) {
+                        objToLocalStorage("TaRunId", data.TaRunId);
+                        window.location.href = path + "/my-TArun.html";
+                    },
+                    TaStart(data) {
+                        objToLocalStorage("TaStartId", data.TaStartId);
+                        window.location.href = path + "/my-TAstart.html";
+                    }
+                }
+            });
+            $(".jump-TA-run").on("click", function () {
+                window.location.href = "my-TArun.html";
+            });
+            $(".jump-back").on("click", function () {
+                window.history.back();
+            });
+        });
+    });
+</script>
+<script src="js/page-jump.js"></script>
+</html>

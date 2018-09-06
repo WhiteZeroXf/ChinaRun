@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="css/MessageDetails.css" />
+		<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+		<script src="js/bootstrap.min.js"></script>
+		<script src="js/common.js"></script>
+		<script src="js/jquery-1.11.0.min.js"></script>
+	</head>
+	<script>
+		$(document).ready(function () {
+            var mstSystemId = localStorageToObj("msgSystemId");
+            myAjax("/msgSystem/findById", {"mstSystemId": mstSystemId}, function (data) {
+                var msg = data["msg"];
+                $("#content").html(msg.content);
+                $("#time").html(msg.createTime);
+                var user = data["user"];
+                var usern = user.username + ":";
+                $("#username").append(usern);
+                upstate(mstSystemId);
+
+                $("#back").on("click", function () {
+                    window.location = "/Notification.html";
+                })
+            })
+
+
+            function upstate(mstSystemId) {
+                myAjax("/msgSystem/upState", {"mstSystemId": mstSystemId}, function (data) {
+                    if (data==0) {
+                        alert("阅读失败");
+                    }
+
+                })
+            }
+        })
+
+
+	</script>
+
+	<body>
+		<div class="wrap">
+			<div class="head">
+				<div class="header">
+					<div class="back"id="back">
+						<img src="img/icon_back.png" />
+						<span >返回</span>
+					</div>
+				</div>
+			</div>
+
+			<div class="main">
+				<div class="title">
+					系统消息
+				</div>
+				<div class="content">
+					<div class="mess">
+						<p id="username">亲爱的</p>
+						<p id="content">
+
+						</p>
+					</div>
+					<div class="time" id="time"></div>
+				</div>
+			</div>
+		</div>
+	</body>
+
+</html>

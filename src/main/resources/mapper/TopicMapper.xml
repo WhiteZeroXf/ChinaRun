@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero.cr.dao.TopicMapper">
+    <resultMap id="BaseResultMap" type="com.zero.cr.pojo.Topic">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="topic_id" jdbcType="BIGINT" property="topicId"/>
+        <result column="topic_name" jdbcType="VARCHAR" property="topicName"/>
+        <result column="person_sum" jdbcType="BIGINT" property="personSum"/>
+    </resultMap>
+    <select id="getOne" resultType="Topic">
+        select *
+        from topic
+    </select>
+
+    <!--按热度查询-->
+    <sql id="baseColumn">
+        topic_id, topic_name, person_sum
+    </sql>
+
+    <select id="selectByHot" resultMap="BaseResultMap">
+        SELECT
+        <include refid="baseColumn"></include>
+        FROM topic
+        ORDER BY person_sum DESC ,topic_id asc
+    </select>
+    <!--获取主题+话题-->
+    <select id="getST" resultMap="STMap">
+        select *
+        from subject
+                 join topic on subject.topic_id = topic.topic_id and subject_id = #{subjectId}
+    </select>
+    <resultMap id="STMap" type="ST">
+        <association property="topic" autoMapping="true" javaType="Topic"/>
+        <association property="subject" autoMapping="true" javaType="Subject"/>
+    </resultMap>
+    <!--获取主题+话题 end-->
+</mapper>

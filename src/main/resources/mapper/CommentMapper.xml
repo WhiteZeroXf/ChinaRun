@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero.cr.dao.CommentMapper">
+  <resultMap id="BaseResultMap" type="com.zero.cr.pojo.Comment">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="comment_id"  jdbcType="BIGINT" property="commentId" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="flash_id" jdbcType="BIGINT" property="flashId" />
+    <result column="support_sum" jdbcType="BIGINT" property="supportSum" />
+    <result column="comment_time" jdbcType="TIMESTAMP" property="commentTime" />
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+  </resultMap>
+
+  
+  <resultMap id="ExtendsBaseResult" type="com.zero.cr.pojo.Comment" extends="BaseResultMap" autoMapping="true">
+  <association property="user" javaType="com.zero.cr.pojo.User" autoMapping="true">
+    <id column="user_id" jdbcType="BIGINT" property="userId"/>
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="head_img" jdbcType="VARCHAR" property="headImg" />
+  </association>
+
+  </resultMap>
+  <sql id="baseColumn">
+    comment_id,user_id,flash_id,support_sum,comment_time,content
+  </sql>
+
+  <!--查询当前用户当前日志的评论-->
+  <select id="selectByUFId" resultMap="ExtendsBaseResult">
+    SELECT
+    c.comment_id,c.user_id,c.flash_id,c.support_sum,c.comment_time,c.content,
+    u.username,u.head_img,fc.flash_comment_log_id as isZan
+    FROM comment c LEFT JOIN user u on c.user_id=u.user_id
+    LEFT JOIN flash_comment_log fc on fc.user_id=#{userId} and fc.type_id=c.comment_id and fc.type=3
+    WHERE
+       c.flash_id  =#{flashId}
+
+  </select>
+  <!--添加评论-->
+  <insert id="insertComment">
+    INSERT  INTO comment (user_id, flash_id, support_sum, comment_time, content)
+    VALUES (#{userId},#{flashId},0,now(),#{content});
+
+  </insert>
+  <!--点赞评论-->
+  <update id="updateSupportSum">
+       update comment set support_sum = support_sum+1 where comment_id=#{commentId}
+  </update>
+
+</mapper>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/amazeui.min.css">
+    <link rel="stylesheet" href="css/app.css">
+    <script src="js/jquery-1.11.0.min.js"></script>
+</head>
+
+<body>
+<div class="am-g myapp-login">
+    <div class="myapp-login-bg">
+        <div class="myapp-login-logo">
+            <img class="am-icon-stumbleupon" src="img/logo.png"/>
+        </div>
+        <div class="am-u-sm-10 myapp-login-form">
+            <div class="am-form">
+                <fieldset>
+                    <div class="am-form-group">
+                        <input type="text" v-model="chang" id="username" placeholder="请输入账号" autocomplete="off" maxlength="20">
+                    </div>
+                    <div class="am-form-group">
+                        <input type="password" v-text="name" id="password" placeholder="请输入密码" autocomplete="off">
+                    </div>
+                    <p>
+                        <button id="login" class="am-btn am-btn-default">登录</button>
+                    </p>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="js/common.js"></script>
+<script src="js/vue.js"></script>
+<script>
+
+    $(function () {
+        $("#login").on("click", function () {
+            var username = $("#username").val();
+            var password = $("#password").val();
+            myAjax("/user/login", {"username": username, "password": password}, function (data) {
+                objToLocalStorage("user", data.user);
+                objToLocalStorage("userToken", data.userToken);
+                window.location.replace(data.url);
+            });
+        });
+    });
+</script>
+</html>

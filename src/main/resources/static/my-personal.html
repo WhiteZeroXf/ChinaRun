@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="css/Personal.css"/>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <script src="js/jquery-1.11.0.min.js"></script>
+    <script src="js/datePicker.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/element.js"></script>
+    <script src="js/vue.js"></script>
+    <script src="js/page-jump.js"></script>
+    <script>
+
+    </script>
+</head>
+
+<body>
+<div class="wrap" id="wrap">
+    <div class="head">
+        <div class="header">
+            <div class="back jump-back">
+                <img src="img/icon_back.png"/>
+                <span id="">返回</span>
+            </div>
+            <div class="submit" id="submit">
+                保存
+            </div>
+        </div>
+    </div>
+
+    <div class="main" v-bind="user">
+        <div class="title">
+            个人资料
+        </div>
+
+        <div class="content">
+            <div class="about">
+                <div id="head-change">
+                    更换头像
+                </div>
+                <div class="img">
+                    <input accept="image/*" type="file" id="upload_input" @change="fileChange($event)" multiple
+                           style="display: none;"/>
+                    <div id="images" class="upload_warp_img_div" v-for="(item,index) of imageList">
+                        <div>
+                            <img src="img/Close button.png" class="upload_warp_img_div_del"
+                                 style="width: 16px;height: 16px;!important;" @click="fileDel(index)">
+                        </div>
+                        <img class="file_image" :src="item.file.src">
+                    </div>
+                    <div class="img-head" @click="fileClick">
+                        <img :src="user.headImg" id="img_head"/>
+                    </div>
+                    <img src="img/icon_back1.png"/>
+                </div>
+
+            </div>
+            <div class="about">
+                <div id="name-change">
+                    昵称
+                </div>
+                <div class="img">
+                    <input type="text" id="username" name="username" class="name" v-model="user.username">
+
+                    <label></label>
+                </div>
+            </div>
+
+<!--
+            <div class="about">
+                <div id="sex-change">
+                    性别
+                </div>
+
+                <div class="input-choose" v-if="user.gender=='男'">
+                    <div class="man">
+                        <input type="radio" name="sex" id="male" value="男" checked="checked"/><label
+                            for="male">男</label>
+                    </div>
+                    <div class="woman">
+                        <input type="radio" name="sex" id="female" value="女"/><label for="female">女</label>
+                    </div>
+                </div>
+                <div class="input-choose" v-else-if="user.gender=='女'">
+                    <div class="man">
+                        <input type="radio" name="sex" id="male1" value="男"/><label for="male">男</label>
+                    </div>
+                    <div class="woman">
+                        <input type="radio" name="sex" id="female1" value="女" checked="checked"/><label
+                            for="female">女</label>
+                    </div>
+                </div>
+
+            </div>
+-->
+
+
+        </div>
+
+        <div class="about" id="select-birthday">
+            <div id="bir-change">
+                生日
+            </div>
+            <div class="img">
+                <span id="birthday" v-text="birthday"></span>
+            </div>
+        </div>
+
+        <div id="qm">
+            <div class="qm-one"><span>留下你的签名吧～</span></div>
+            <br/>
+            <textarea class="lx" v-model="user.sign" id="sign"></textarea>
+        </div>
+
+    </div>
+</div>
+</body>
+<script>
+    var vue;
+    $(function () {
+        var user = localStorageToObj("user");
+        vue = new Vue({
+            el: '#wrap',
+            data: {
+                imageList: [],
+                user: user,
+                birthday: user.birthday.substr(0, 10),
+                items: {
+                    text: '',
+                },
+            },
+            methods: {
+                fileClick() {
+                    document.getElementById("upload_input").click();
+                },
+                fileChange(el) {
+                    var fileSize = el.target.files[0].size / 1024 / 1024;
+                    if (!el.target.files[0].size)
+                        return;
+                    if (fileSize > 2) {
+                        alert("单张图片最大只支持2M！");
+                        return
+                    }
+                    this.fileList(el.target.files)
+                },
+                fileList(files) {
+                    for (var i = 0; i < files.length; i++) {
+                        this.fileAdd(files[i]);
+                    }
+                },
+                fileAdd(file) {
+                    var reader = new FileReader();
+                    reader.vue = this;
+                    reader.readAsDataURL(file);
+                    reader.onload = function () {
+                        file.src = this.result;
+                        $("#img_head").attr("src", this.result);
+                        this.vue.imageList.push(this.result);
+                    }
+                },
+            }
+        });
+
+        var now = new Date();
+        var date = now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate();
+        var calendar = new DatePicker();
+        calendar.init({
+            'trigger': '#select-birthday', /*按钮选择器，用于触发弹出插件*/
+            'type': 'date', /*模式：date日期；datetime日期时间；time时间；ym年月；*/
+            'minDate': '1900-1-1', /*最小日期*/
+            'maxDate': date, /*最大日期*/
+            'onSubmit': function () {/*确认时触发事件*/
+                $("#birthday").text(calendar.value);
+            },
+            'onClose': function () {/*取消时触发事件*/
+            }
+        });
+
+
+        $("#submit").on('click', function () {
+            var my = {
+                userId: user.userId,
+                headImg: vue.imageList[0],
+                username: $("#username").val(),
+                birthday: $("#birthday").text(),
+                gender: $("input[name='sex'][checked]").val(),
+                sign: $("#sign").val(),
+            };
+            console.log(my);
+            myAjax("/user/save", my, function (data) {
+                objToLocalStorage("user", data);
+                alert("保存成功！");
+                vue.$forceUpdate();
+                window.location.href = "index-my.html";
+            });
+        });
+        $(".jump-back").on("click", function () {
+            window.history.back();
+        });
+    });
+</script>
+</html>

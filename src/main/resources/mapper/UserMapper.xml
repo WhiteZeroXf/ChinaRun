@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero.cr.dao.UserMapper">
+    <resultMap id="BaseResultMap" type="com.zero.cr.pojo.User">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="gender" jdbcType="VARCHAR" property="gender"/>
+        <result column="age" jdbcType="INTEGER" property="age"/>
+        <result column="birthday" jdbcType="DATE" property="birthday"/>
+        <result column="head_img" jdbcType="VARCHAR" property="headImg"/>
+        <result column="sign" jdbcType="VARCHAR" property="sign"/>
+        <result column="fans_sum" jdbcType="BIGINT" property="fansSum"/>
+        <result column="follow_sum" jdbcType="BIGINT" property="followSum"/>
+        <result column="contribute_hours" jdbcType="DOUBLE" property="contributeHours"/>
+        <result column="contribute_sum" jdbcType="INTEGER" property="contributeSum"/>
+        <result column="contribute_mils" jdbcType="DOUBLE" property="contributeMils"/>
+        <result column="message_sum" jdbcType="INTEGER" property="messageSum"/>
+    </resultMap>
+    <sql id="UserList">
+        user_id,username,password,gender,age,birthday,head_img,sign,fans_sum,follow_sum,contribute_mils,contribute_hours,contribute_sum,message_sum
+    </sql>
+    <select id="getUserById" parameterType="java.lang.Long"
+            resultMap="BaseResultMap">
+        select
+        <include refid="UserList"></include>
+        from user
+        where user.user_id=#{userId}
+    </select>
+
+    <select id="getSubjectUserTop3" resultMap="BaseResultMap">
+        SELECT u.*
+        FROM user u,`join` j
+        WHERE u.user_id = j.user_id AND j.subject_id = #{subjectId}
+        ORDER BY j.join_id DESC LIMIT 0,3
+    </select>
+    <update id="save" parameterType="com.zero.cr.pojo.User">
+        update user
+        set
+        username=#{username},
+        head_img=#{headImg},
+        birthday=#{birthday},
+        gender=#{gender},
+        sign=#{sign}
+        where user_id=#{userId}
+    </update>
+</mapper>

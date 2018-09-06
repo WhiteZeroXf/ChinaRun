@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../css/Running.css"/>
+		<script type="text/javascript" src="../js/jquery-1.11.0.min.js"></script>
+		<script type="text/javascript" src='//webapi.amap.com/maps?v=1.4.9&key=a7b47e152949ce4c0cd236defbeaaee8'></script>
+		<!-- UI组件库 1.0 -->
+		<script src="//webapi.amap.com/ui/1.0/main.js?v=1.0.11"></script>
+		<script src="../js/md5.js"></script>
+		<script src="../js/element.js"></script>
+		<script src="../js/common.js"></script>
+		<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+	</head>
+	<body>
+		<div class="wrap">
+			<div class="header">
+				<img src="../img/blackback.png" id="img-black" />
+			</div>
+			<div class="up-map" id="container">
+
+			</div>
+			<div class="down">
+				<div class="down-btn">
+					<div class="btn-init">
+						<div class="one">
+							<img src="../img/btn-camo.png" />
+						</div>
+						<div class="two">
+							<img src="../img/btn-zt.png" id="zt"/>
+						</div>
+						<div class="three">
+							<img src="../img/btn-begin.png" id="be"/>
+						</div>
+						<div class="three">
+							<img src="../img/Group 2.png" id="end"/>
+						</div>
+						<div class="one">
+							<img src="../img/btn-add.png" id="add"/>
+						</div>
+					</div>
+				</div>
+				
+				<div class="img-bg-up">
+					<img src="../img/shape4.png"/>
+				</div>
+				<div class="content">
+					<div class="ts" style="display: none;">
+						暂停倒计时：30′59″<br /> 倒计时结束后将自动结束本次跑步
+					</div>
+					<div class="mile">
+						<span id="mail">
+							<!--6.20-->
+						</span>
+						距离(公里)
+					</div>
+					<div class="time">
+						<span id="time">
+							<!--00:00:00-->
+						</span>
+						用时
+					</div>
+				</div>
+
+			</div>
+		</div>
+		<script src="js/running.js"></script>
+	</body>
+</html>

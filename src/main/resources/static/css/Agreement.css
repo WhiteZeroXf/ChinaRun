@@ -1,0 +1,18 @@
+html{font-size: 50px;}
+body{font-size: 0.14rem /*实际相当于14px*/}
+
+*{margin: 0rem;padding: 0rem;}
+body{margin: 0rem;padding: 0rem;width: 100%;font-family: PingFangSC-Semibold;}
+ul li{list-style-type: none;}
+a{text-decoration: none;}
+
+.head{width: 100%;top: 0;font-size: 0.28rem;background: #FFFFFF;}
+.header{height: 0.66rem;background-color: white;display: flex;justify-content: space-between;align-items: flex-end;padding-left: 0.5rem;padding-right: 0.5rem;padding-bottom: 0.24rem;}
+.back{font-family: PingFangSC-Semibold;color: #AAADB9;width: 20%;display: flex;align-items: center;}
+.back img{width: auto;height: 0.28rem;padding-right: 0.16rem;}
+
+.main{width: 87%;margin-left: auto;margin-right: auto;margin-top: 0.4rem;margin-bottom: 3rem;}
+.title{font-size: 0.44rem;color: #292C35;text-align: center;margin-bottom: 0.36rem;}
+.des-xy{font-size: 0.24rem;color: #585D6B;text-indent: 2em;}
+.smalltitle{font-size: 0.28rem;color: #292C35;text-indent: 2em;margin-top: 0.5rem;margin-bottom: 0.2rem;}
+.xy-1-con p{font-size: 0.24rem;color: #585D6B;text-indent: 2em;}
